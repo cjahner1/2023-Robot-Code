@@ -5,9 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.HallwaySubsystem;
-import frc.robot.subsystems.PhotonVisionSubsystem;
-import frc.robot.subsystems.ThrowerSubsystem;
+import frc.robot.subsystems.CameraSub;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,9 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
-  private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
-  private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
+  private final CameraSub m_camera = new CameraSub();
 
 
 

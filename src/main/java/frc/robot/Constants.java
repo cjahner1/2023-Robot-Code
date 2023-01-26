@@ -34,7 +34,13 @@ public final class Constants {
   }
 
   public static class PhotonVisionConstants {
-    
+      public static final double cameraHeightInches = 31; //replace when robot is done
+      public static final double cameraAngle = 42; //replace
+      public static final double goalTag = 50; //replace
+      public static final double itemTag = 70; //replace
+      public static class OperatorConstants {
+        public static final int kDriverControllerPort = 0;
+      }
   }
 
   public static class SecondaryVisionConstants {
