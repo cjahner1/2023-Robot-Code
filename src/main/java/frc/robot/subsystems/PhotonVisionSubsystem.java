@@ -14,6 +14,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PhotonVisionConstants;
@@ -33,15 +35,20 @@ public class PhotonVisionSubsystem extends SubsystemBase {
   private double range;
   
   public PhotonVisionSubsystem() {
-
-    SmartDashboard.putNumber("TargetID", 0);
-    SmartDashboard.putNumber("Yaw / X-Offset", 0);
-    SmartDashboard.putNumber("Pitch / Y-Offset", 0);
-    SmartDashboard.putNumber("Area", 0);
-    SmartDashboard.putNumber("Skew", 0);
-    SmartDashboard.putNumber("Distance To Target", 0);
-    SmartDashboard.putString("Translation2d", "0");
+    configureShuffleBoard();
   }
+  public void configureShuffleBoard(){
+    SmartDashboard.putNumber("TargetID", 0);
+    ShuffleboardTab tab = Shuffleboard.getTab("PhotonVision");
+    tab.addNumber("TargetID", this::getTargetID);
+    tab.addNumber("Yaw / X-Offset", this::getYaw);
+    tab.addNumber("Pitch / Y-Offset", this::getPitch);
+    tab.addNumber("Area", this::getArea);
+    tab.addNumber("Skew", this::getSkew);
+    tab.addNumber("Distance To Target", this::getRange);
+    tab.addString("Translation2d", this::getTranslationString);
+  }
+  
   @Override
   public void periodic() {
     result = camera.getLatestResult();
@@ -64,16 +71,31 @@ public class PhotonVisionSubsystem extends SubsystemBase {
       }
       
       translation = PhotonUtils.estimateCameraToTargetTranslation(range, Rotation2d.fromDegrees(-target.getYaw()));
-      //System.out.println(translation);
-      SmartDashboard.putNumber("TargetID", targetID);
-      SmartDashboard.putNumber("Yaw / X-Offset", yaw);
-      SmartDashboard.putNumber("Pitch / Y-Offset", pitch);
-      SmartDashboard.putNumber("Area", area);
-      SmartDashboard.putNumber("Skew", skew);
-      SmartDashboard.putNumber("Distance To Target", range);
-      SmartDashboard.putString("Translation2d", translation.toString());
-    }
-      
+    }   
     // This method will be called once per scheduler run
+  }
+  public double getTargetID(){
+    return targetID;
+  }
+  public double getYaw(){
+    return yaw;
+  }
+  public double getPitch(){
+    return pitch;
+  }
+  public double getArea(){
+    return area;
+  }
+  public double getSkew(){
+    return skew;
+  }
+  public double getRange(){
+    return range;
+  }
+  public Translation2d getTranslation(){
+    return translation;
+  }
+  public String getTranslationString(){
+    return translation.toString();
   }
 }
