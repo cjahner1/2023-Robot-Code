@@ -24,20 +24,22 @@ public final class Constants {
 
   public static class ThrowerConstants {
 
+    public static final int primaryMotorID = 5;
+
     public static final boolean primaryMotorInverted = false;
     public static final boolean secondaryMotorInverted = false;
 
     //motion magic values 
-    public static int travelCruiseVelocity = 0;
-    public static int travelAcceleration = 0;
-    public static int travelProfileSmoothing = 0;
+    public static int travelCruiseVelocity = 1000;
+    public static int travelAcceleration = 1000;
+    public static int travelProfileSmoothing = 2;
 
-    public static int throwCruiseVelocity = 0;
-    public static int throwAcceleration = 0;
-    public static int throwProfileSmoothing = 0;
+    public static int throwCruiseVelocity = 1000;
+    public static int throwAcceleration = 1000;
+    public static int throwProfileSmoothing = 2;
 
     //motion profile tolerance - how close the motor has to be to the target position to be considered "done" (measured in encoder ticks)
-    public static int motionProfileTolerance = 0;
+    public static int motionProfileTolerance = 15;
 
     //pid values
     public static int travelkP = 0;

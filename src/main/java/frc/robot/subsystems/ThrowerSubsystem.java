@@ -19,9 +19,13 @@ public class ThrowerSubsystem extends SubsystemBase {
 
   /** Creates a new ThrowerSubsystem. */
   public ThrowerSubsystem() {
+    primaryMotor = new WPI_TalonFX(ThrowerConstants.primaryMotorID);
+
     primaryMotor.configFactoryDefault();
     primaryMotor.setNeutralMode(NeutralMode.Brake);
     primaryMotor.setInverted(ThrowerConstants.primaryMotorInverted);
+    resetEncoders();
+
     //secondaryMotor.configFactoryDefault()
     configurePIDSlots();
 
@@ -35,6 +39,9 @@ public class ThrowerSubsystem extends SubsystemBase {
   //check to see if the motor is at the target position
   public boolean motionProfileFinished() {
     return primaryMotor.getClosedLoopError() < ThrowerConstants.motionProfileTolerance;
+  }
+  public void resetEncoders() {
+    primaryMotor.setSelectedSensorPosition(0);
   }
 
   public void setLoadPosition() {

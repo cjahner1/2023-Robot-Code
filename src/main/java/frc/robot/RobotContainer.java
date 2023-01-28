@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.thrower.LowerCommand;
 import frc.robot.commands.thrower.PreThrowCommand;
+import frc.robot.commands.thrower.ResetEncoderCommand;
 import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
 import frc.robot.subsystems.HallwaySubsystem;
@@ -57,6 +58,8 @@ public class RobotContainer {
     m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
     m_driverController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
     m_driverController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
+    
+    m_driverController.a().onTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
   private void configureThrowerSubsystem() {
