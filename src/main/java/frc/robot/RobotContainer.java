@@ -59,7 +59,7 @@ public class RobotContainer {
     m_driverController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
     m_driverController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
 
-    m_driverController.a().onTrue(new ResetEncoderCommand(throwerSubsystem));
+    m_driverController.a().whileTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
   private void configureThrowerSubsystem() {
