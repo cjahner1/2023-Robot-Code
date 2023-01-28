@@ -70,7 +70,7 @@ public class RobotContainer {
 
     //driver preferences from shuffleboard
     GenericEntry rumblePref = Shuffleboard.getTab("Preferences")
-        .add("My Number", 0)
+        .add("Rumble On Ready", true)
         .withWidget(BuiltInWidgets.kToggleSwitch)
         .getEntry();
 
