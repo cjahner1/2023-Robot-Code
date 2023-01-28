@@ -5,6 +5,9 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.thrower.LowerCommand;
+import frc.robot.commands.thrower.PreThrowCommand;
+import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
@@ -48,6 +51,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
+
+    //thrower
+    m_driverController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
+    m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
+    m_driverController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
+    m_driverController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
   }
 
   private void configureThrowerSubsystem() {
