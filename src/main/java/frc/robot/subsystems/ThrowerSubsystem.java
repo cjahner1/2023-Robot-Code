@@ -29,11 +29,12 @@ public class ThrowerSubsystem extends SubsystemBase {
     //secondaryMotor.configFactoryDefault()
     configurePIDSlots();
 
+    configureShuffleboard();
+
   }
 
   @Override
   public void periodic() {
-    updateShuffleboard();
   }
   
   //check to see if the motor is at the target position
@@ -81,20 +82,21 @@ public class ThrowerSubsystem extends SubsystemBase {
   //configures pid slots for the motor, slot 0 for throw, slot 1 for traveling
   public void configurePIDSlots() {
     //slot 0
-    primaryMotor.config_kP(ThrowerConstants.throwkP, 0);
-    primaryMotor.config_kI(ThrowerConstants.throwkI, 0);
-    primaryMotor.config_kD(ThrowerConstants.throwkD, 0);
-    primaryMotor.config_kF(ThrowerConstants.throwkF, 0);
-
+    primaryMotor.config_kP(0, ThrowerConstants.throwkP);
+    primaryMotor.config_kI(0, ThrowerConstants.throwkI);
+    primaryMotor.config_kD(0, ThrowerConstants.throwkD);
+    primaryMotor.config_kF(0, ThrowerConstants.throwkF);
     //slot 1
-    primaryMotor.config_kP(ThrowerConstants.travelkP, 1);
-    primaryMotor.config_kI(ThrowerConstants.travelkI, 1);
-    primaryMotor.config_kD(ThrowerConstants.travelkD, 1);
-    primaryMotor.config_kF(ThrowerConstants.travelkF, 1);
+    primaryMotor.config_kP(1, ThrowerConstants.travelkP);
+    primaryMotor.config_kI(1, ThrowerConstants.travelkI);
+    primaryMotor.config_kD(1, ThrowerConstants.travelkD);
+    primaryMotor.config_kF(1, ThrowerConstants.travelkF);
+    
 
   }
-  public void updateShuffleboard() {
+  public void configureShuffleboard() {
     ShuffleboardTab tab = Shuffleboard.getTab("Thrower");
+    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates
     tab.addNumber("Primary Motor Velocity", primaryMotor::getSelectedSensorVelocity);
     tab.addNumber("Primary Motor Position", primaryMotor::getSelectedSensorPosition);
     tab.addNumber("Primary Motor Error", primaryMotor::getClosedLoopError);

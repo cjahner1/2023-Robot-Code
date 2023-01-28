@@ -58,13 +58,16 @@ public class RobotContainer {
     m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
     m_driverController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
     m_driverController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
-    
+
     m_driverController.a().onTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
   private void configureThrowerSubsystem() {
     //Configure thrower subsystem
-    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
+
+    //TODO: uncomment when motors dont need to be reset by hand
+    //throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
+
   }
 
   /**
