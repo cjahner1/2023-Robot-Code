@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.thrower.TravelCommand;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
@@ -32,8 +33,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
     configureBindings();
+    configureThrowerSubsystem();
   }
 
   /**
@@ -47,6 +48,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
+  }
+
+  private void configureThrowerSubsystem() {
+    //Configure thrower subsystem
+    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
   }
 
   /**

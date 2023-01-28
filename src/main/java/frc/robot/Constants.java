@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -22,6 +23,39 @@ public final class Constants {
   }
 
   public static class ThrowerConstants {
+
+    public static final boolean primaryMotorInverted = false;
+    public static final boolean secondaryMotorInverted = false;
+
+    //motion magic values 
+    public static int travelCruiseVelocity = 0;
+    public static int travelAcceleration = 0;
+    public static int travelProfileSmoothing = 0;
+
+    public static int throwCruiseVelocity = 0;
+    public static int throwAcceleration = 0;
+    public static int throwProfileSmoothing = 0;
+
+    //motion profile tolerance - how close the motor has to be to the target position to be considered "done" (measured in encoder ticks)
+    public static int motionProfileTolerance = 0;
+
+    //pid values
+    public static int travelkP = 0;
+    public static int travelkI = 0;
+    public static int travelkD = 0;
+    public static int travelkF = 0;
+
+    public static int throwkP = 0;
+    public static int throwkI = 0;
+    public static int throwkD = 0;
+    public static int throwkF = 0;
+
+    //Encoder position values
+    public static int loadPosition = 0;
+    public static int travelPosition = 0;
+    public static int preShootPosition = 0;
+    public static int throwPosition = 0;
+
     
   }
 

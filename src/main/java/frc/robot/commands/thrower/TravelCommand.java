@@ -7,18 +7,19 @@ package frc.robot.commands.thrower;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ThrowerSubsystem;
 
-public class ThrowCommand extends CommandBase {
+public class TravelCommand extends CommandBase {
+  /** Creates a new TravelCommand. */
   ThrowerSubsystem throwerSubsystem;
-  public ThrowCommand(ThrowerSubsystem _throwerSubsystem) {
+  public TravelCommand(ThrowerSubsystem _throwerSubsystem) {
     throwerSubsystem = _throwerSubsystem;
-    
+
     addRequirements(throwerSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    throwerSubsystem.setThrowPosition();
+    throwerSubsystem.setTravelPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
