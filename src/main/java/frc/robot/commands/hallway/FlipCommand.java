@@ -7,10 +7,10 @@ package frc.robot.commands.hallway;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.HallwaySubsystem;
 
-public class IntakeCommand extends CommandBase {
+public class FlipCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
-  /** Creates a new IntakeCommand. */
-  public IntakeCommand(HallwaySubsystem _hallwaySubsystem) {
+  /** Creates a new FlipCommand. */
+  public FlipCommand(HallwaySubsystem _hallwaySubsystem) {
     hallwaySubsystem = _hallwaySubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
@@ -23,7 +23,7 @@ public class IntakeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setIntake(0.2);
+    hallwaySubsystem.setFlipper(0.5);
   }
 
   // Called once the command ends or is interrupted.

@@ -4,10 +4,12 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.drive.DriveCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,18 +22,27 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  //subsystems
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
+  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
+  //commands
+  private final DriveCommand driveCommand = new DriveCommand();
 
+  //triggers
+  private final Trigger trigFlip = new Trigger(HallwaySubsystem::pixyDetect);
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  //controllers
+  private final CommandXboxController controller1 = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Set default commands for subsystems
+    driveSubsystem.setDefaultCommand(driveCommand);
+
     // Configure the trigger bindings
     configureBindings();
   }
@@ -47,7 +58,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    //test3
+    
   }
 
   /**
