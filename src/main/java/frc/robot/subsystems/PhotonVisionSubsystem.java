@@ -99,4 +99,13 @@ public class PhotonVisionSubsystem extends SubsystemBase {
   public String getTranslationString(){
     return translation.toString();
   }
+  public boolean targetInRange() {
+    if (range < PhotonVisionConstants.targetRange) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
 }

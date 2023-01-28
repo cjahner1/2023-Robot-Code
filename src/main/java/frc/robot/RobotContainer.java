@@ -5,8 +5,14 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.CameraSub;
+import frc.robot.subsystems.PhotonVisionSubsystem;
+
+import java.util.Set;
+
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -18,14 +24,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final CameraSub m_camera = new CameraSub();
+  private final PhotonVisionSubsystem m_photonVisionSubsystem = new PhotonVisionSubsystem();
 
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -44,6 +49,24 @@ public class RobotContainer {
   private void configureBindings() {
     //Configure button bindings
     //test3
+
+    //rumble when target is found
+    Trigger targetFound = new Trigger(m_photonVisionSubsystem::targetInRange);
+    CommandBase rumbleCommand = new CommandBase() {
+      @Override
+      public void initialize() {
+        m_driverController.getHID().setRumble(RumbleType.kLeftRumble, 0.5);
+        m_driverController.getHID().setRumble(RumbleType.kRightRumble, 0.5);
+      }
+      @Override
+      public void end(boolean interrupted) {
+        m_driverController.getHID().setRumble(RumbleType.kLeftRumble, 0);
+        m_driverController.getHID().setRumble(RumbleType.kRightRumble, 0);
+      }
+    };
+
+    targetFound.whileTrue(rumbleCommand);
+
   }
 
   /**
