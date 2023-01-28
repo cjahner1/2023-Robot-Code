@@ -5,12 +5,16 @@
 package frc.robot;
 
 import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.hallway.FlipForwardCommand;
+import frc.robot.commands.hallway.FlipReverseCommand;
+import frc.robot.commands.hallway.IntakeCommand;
+import frc.robot.commands.hallway.PurgeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
-
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -32,7 +36,8 @@ public class RobotContainer {
   private final DriveCommand driveCommand = new DriveCommand();
 
   //triggers
-  private final Trigger trigFlip = new Trigger(HallwaySubsystem::pixyDetect);
+  private final Trigger trigFlipForward = new Trigger(HallwaySubsystem::tipDetect);
+  private final Trigger trigFlipReverse = new Trigger(HallwaySubsystem::baseDetect);
 
   //controllers
   private final CommandXboxController controller1 = new CommandXboxController(0);
@@ -58,6 +63,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
+    controller1.rightTrigger().whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    controller1.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    trigFlipForward.or(controller2.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
+    trigFlipReverse.or(controller2.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+
     
   }
 

@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class HallwaySubsystem extends SubsystemBase {
@@ -15,6 +16,8 @@ public class HallwaySubsystem extends SubsystemBase {
   private WPI_TalonFX intake2fx = new WPI_TalonFX(10);
   private WPI_TalonFX flipper1fx = new WPI_TalonFX(11);
   private WPI_TalonFX flipper2fx = new WPI_TalonFX(12);
+
+  private static SendableChooser<Boolean> cameraChoose = new SendableChooser<>();
 
   /** Creates a new HallwaySubsystem. */
   public HallwaySubsystem() {
@@ -35,6 +38,9 @@ public class HallwaySubsystem extends SubsystemBase {
 
     intake2fx.follow(intake1fx);
     flipper2fx.follow(flipper1fx);
+
+    cameraChoose.setDefaultOption("Auto flip", true);
+    cameraChoose.addOption("Manual Flip", false);
   }
 
   public void setIntake(double percent){
@@ -42,20 +48,25 @@ public class HallwaySubsystem extends SubsystemBase {
   }
 
   public void setFlipper(double percent){
-    int placeholder = 1;
-    if(placeholder == 0 /*placeholder for pixy*/){
-      flipper1fx.set(ControlMode.PercentOutput, percent);
-    } else if(placeholder == 1 /*placeholder*/){
-      flipper1fx.set(ControlMode.PercentOutput, -percent);
-    } else {
-      flipper1fx.set(ControlMode.PercentOutput, 0);
-    }
+    flipper1fx.set(ControlMode.PercentOutput, percent);
   }
 
-  public static boolean pixyDetect() {
-    boolean placeholder=false;
-    if(placeholder){
-      return true;
+  public static boolean tipDetect() {
+    if(cameraChoose.getSelected()){
+      boolean placeholder=false;
+      if(placeholder){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static boolean baseDetect() {
+    if(cameraChoose.getSelected()){
+      boolean placeholder=false;
+      if(placeholder){
+        return true;
+      }
     }
     return false;
   }
