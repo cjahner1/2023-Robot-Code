@@ -30,33 +30,33 @@ public final class Constants {
     public static final boolean secondaryMotorInverted = false;
 
     //motion magic values 
-    public static int travelCruiseVelocity = 1000;
-    public static int travelAcceleration = 1000;
+    public static int travelCruiseVelocity = 6000;
+    public static int travelAcceleration = 6000;
     public static int travelProfileSmoothing = 2;
 
-    public static int throwCruiseVelocity = 1000;
-    public static int throwAcceleration = 1000;
+    public static int throwCruiseVelocity = 6000;
+    public static int throwAcceleration = 6000;
     public static int throwProfileSmoothing = 2;
 
     //motion profile tolerance - how close the motor has to be to the target position to be considered "done" (measured in encoder ticks)
     public static int motionProfileTolerance = 15;
 
     //pid values
-    public static int travelkP = 0;
+    public static double travelkP = 0.02;
     public static int travelkI = 0;
     public static int travelkD = 0;
     public static int travelkF = 0;
 
-    public static int throwkP = 0;
+    public static double throwkP = 0.02;
     public static int throwkI = 0;
     public static int throwkD = 0;
     public static int throwkF = 0;
 
     //Encoder position values
-    public static int loadPosition = 0;
-    public static int travelPosition = 0;
-    public static int preShootPosition = 0;
-    public static int throwPosition = 0;
+    public static int loadPosition = 15000;
+    public static int travelPosition = 25000;
+    public static int preShootPosition = 35000;
+    public static int throwPosition = 55000;
 
     
   }
