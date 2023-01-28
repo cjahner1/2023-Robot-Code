@@ -63,7 +63,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    controller1.rightTrigger().whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    controller1.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     controller1.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
     trigFlipForward.or(controller2.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
     trigFlipReverse.or(controller2.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
