@@ -9,7 +9,10 @@ import frc.robot.subsystems.PhotonVisionSubsystem;
 
 import java.util.Set;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -65,7 +68,15 @@ public class RobotContainer {
       }
     };
 
-    targetFound.whileTrue(rumbleCommand);
+    //driver preferences from shuffleboard
+    GenericEntry rumblePref = Shuffleboard.getTab("Preferences")
+        .add("My Number", 0)
+        .withWidget(BuiltInWidgets.kToggleSwitch)
+        .getEntry();
+
+    Trigger rumblePrefTrigger = new Trigger(() -> rumblePref.getBoolean(true));
+
+    rumblePrefTrigger.and(targetFound).whileTrue(rumbleCommand);
 
   }
 
