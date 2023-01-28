@@ -22,7 +22,7 @@ import frc.robot.Constants.PhotonVisionConstants;
 
 public class PhotonVisionSubsystem extends SubsystemBase {
   /** Creates a new CameraSubSys. */
-  private PhotonCamera camera = new PhotonCamera("OV5647");
+  private PhotonCamera camera;
   private PhotonPipelineResult result;
   private List<PhotonTrackedTarget> targets;
   private PhotonTrackedTarget target;
@@ -36,9 +36,9 @@ public class PhotonVisionSubsystem extends SubsystemBase {
   
   public PhotonVisionSubsystem() {
     configureShuffleBoard();
+    camera = new PhotonCamera("photonvision");
   }
   public void configureShuffleBoard(){
-    SmartDashboard.putNumber("TargetID", 0);
     ShuffleboardTab tab = Shuffleboard.getTab("PhotonVision");
     tab.addNumber("TargetID", this::getTargetID);
     tab.addNumber("Yaw / X-Offset", this::getYaw);
@@ -48,7 +48,7 @@ public class PhotonVisionSubsystem extends SubsystemBase {
     tab.addNumber("Distance To Target", this::getRange);
     tab.addString("Translation2d", this::getTranslationString);
   }
-  
+
   @Override
   public void periodic() {
     result = camera.getLatestResult();
@@ -63,6 +63,7 @@ public class PhotonVisionSubsystem extends SubsystemBase {
       skew = target.getSkew();
       targetID = target.getFiducialId();
 
+      //check to see if the target is a goal or a hatch
       if(targetID == 5 || targetID == 4){
       range = PhotonUtils.calculateDistanceToTargetMeters(Units.inchesToMeters(PhotonVisionConstants.cameraHeightInches), Units.inchesToMeters(PhotonVisionConstants.itemTag), Units.degreesToRadians(PhotonVisionConstants.cameraAngle), Units.degreesToRadians(result.getBestTarget().getPitch()));
       }
