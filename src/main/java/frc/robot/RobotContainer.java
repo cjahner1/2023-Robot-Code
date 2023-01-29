@@ -5,8 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.SecondaryVisionConstants;
+import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
+import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -23,6 +26,7 @@ public class RobotContainer {
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
+  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem();
 
 
 
@@ -47,7 +51,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    //test3
+    Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
+    Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
+
+    //uses triggers to cover edge case of detected color pulling a little switcharoo mid intake
+    m_driverController.a().and(isYellowTrigger).whileTrue(new IntakeCommand(hallwaySubsystem, "yellow"));
+    m_driverController.a().and(isPurpleTrigger).whileTrue(new IntakeCommand(hallwaySubsystem, "purple"));
   }
 
   /**
