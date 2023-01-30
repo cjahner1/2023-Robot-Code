@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.utils.Direction;
+import frc.robot.utils.Goal;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -34,7 +40,8 @@ public final class Constants {
   }
 
   public static class PhotonVisionConstants {
-    
+    public static Goal goal = new Goal(0, Direction.RIGHT, new Pose2d());
+    public static List<Goal> goals = List.of(goal);
   }
 
   public static class SecondaryVisionConstants {
