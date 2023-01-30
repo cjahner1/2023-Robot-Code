@@ -8,6 +8,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.utils.Direction;
 import frc.robot.utils.Goal;
 
@@ -42,15 +43,25 @@ public final class Constants {
     public static final double ramseteB = 2;
     public static final double ramseteZeta = 0.7;
 
+    public static final double maxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double maxAngularSpeedRadiansPerSecondSquared = Math.PI;
+
+
     public static final double kPXController = 1; //TODO: Tune PID
     public static final double kPYController = 1;
     public static final double kPThetaController = 1;
+
+    /* Constraint for the motion profilied robot angle controller */
+    public static final TrapezoidProfile.Constraints thetaControllerConstraints =
+    new TrapezoidProfile.Constraints(
+        maxAngularSpeedRadiansPerSecond, maxAngularSpeedRadiansPerSecondSquared);
     
   }
 
   public static class PhotonVisionConstants {
     public static Goal goal = new Goal(0, Direction.RIGHT, new Pose2d());
-    public static List<Goal> goals = List.of(goal);
+    public static List<Goal> blueGoals = List.of(goal);
+    public static List<Goal> redGoals = List.of(goal);
   }
 
   public static class SecondaryVisionConstants {

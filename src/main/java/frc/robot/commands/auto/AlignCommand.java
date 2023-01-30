@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -41,14 +42,13 @@ public class AlignCommand extends SequentialCommandGroup {
     double closestDistance = 0;
 
     if (targetGoal == null) {
-      //if no goal is specified, find the closest one
-      for(Goal goal : PhotonVisionConstants.goals) {
-        double x1 = goal.getScoringPose().getX();
-        double y1 = goal.getScoringPose().getY();
-        double x2 = vision.getCurrentPose().getX();
-        double y2 = vision.getCurrentPose().getY();
+      //use list of goals for our alliance (2 seperate lists because field isnt symmetrical)
+      List<Goal> goals = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? PhotonVisionConstants.blueGoals : PhotonVisionConstants.redGoals;
 
-        double distance = Math.hypot(x1-x2, y1-y2);
+      //if no goal is specified, find the closest one
+      for(Goal goal : goals) {
+
+        double distance = goal.getScoringPose().getTranslation().getDistance(vision.getCurrentPose().getTranslation());
 
         if(distance < closestDistance) {
           closestDistance = distance;
