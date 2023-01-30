@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.utils.Direction;
 import frc.robot.utils.Goal;
 
@@ -24,7 +25,7 @@ public final class Constants {
   }
 
   public static class SwerveConstants {
-
+    public static SwerveDriveKinematics kinematics = new SwerveDriveKinematics(null, null, null, null);
   }
 
   public static class ThrowerConstants {
@@ -36,6 +37,10 @@ public final class Constants {
   }
 
   public static class AutoConstants {
+    public static final double maxSpeedMetersPerSecond = 1.5;
+    public static final double maxAccelerationMetersPerSecondSquared = 1.0;
+    public static final double ramseteB = 2;
+    public static final double ramseteZeta = 0.7;
     
   }
 
