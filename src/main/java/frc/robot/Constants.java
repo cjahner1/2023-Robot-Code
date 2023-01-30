@@ -41,6 +41,10 @@ public final class Constants {
     public static final double maxAccelerationMetersPerSecondSquared = 1.0;
     public static final double ramseteB = 2;
     public static final double ramseteZeta = 0.7;
+
+    public static final double kPXController = 1; //TODO: Tune PID
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 1;
     
   }
 
