@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -18,7 +22,7 @@ public final class Constants {
   }
 
   public static class SwerveConstants {
-
+    public static SwerveDriveKinematics kinematics;
   }
 
   public static class ThrowerConstants {
@@ -38,9 +42,7 @@ public final class Constants {
       public static final double cameraAngle = 42; //replace
       public static final double goalTag = 50; //replace
       public static final double itemTag = 70; //replace
-      public static class OperatorConstants {
-        public static final int kDriverControllerPort = 0;
-      }
+      public static Transform3d cameraToRobot = new Transform3d(); //replace
   }
 
   public static class SecondaryVisionConstants {

@@ -5,9 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 
 import java.util.Set;
+
+import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -27,7 +30,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final PhotonVisionSubsystem m_photonVisionSubsystem = new PhotonVisionSubsystem();
+  PhotonCamera camera = new PhotonCamera("limelight"); //TODO change to proper camera name
+  private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final PhotonVisionSubsystem m_photonVisionSubsystem = new PhotonVisionSubsystem(camera, m_driveSubsystem);
 
 
 
@@ -52,31 +57,6 @@ public class RobotContainer {
   private void configureBindings() {
     //Configure button bindings
     //test3
-
-    //rumble when target is found
-    Trigger targetFound = new Trigger(m_photonVisionSubsystem::targetInRange);
-    CommandBase rumbleCommand = new CommandBase() {
-      @Override
-      public void initialize() {
-        m_driverController.getHID().setRumble(RumbleType.kLeftRumble, 0.5);
-        m_driverController.getHID().setRumble(RumbleType.kRightRumble, 0.5);
-      }
-      @Override
-      public void end(boolean interrupted) {
-        m_driverController.getHID().setRumble(RumbleType.kLeftRumble, 0);
-        m_driverController.getHID().setRumble(RumbleType.kRightRumble, 0);
-      }
-    };
-
-    //driver preferences from shuffleboard
-    GenericEntry rumblePref = Shuffleboard.getTab("Preferences")
-        .add("Rumble On Ready", true)
-        .withWidget(BuiltInWidgets.kToggleSwitch)
-        .getEntry();
-
-    Trigger rumblePrefTrigger = new Trigger(() -> rumblePref.getBoolean(true));
-
-    rumblePrefTrigger.and(targetFound).whileTrue(rumbleCommand);
 
   }
 
