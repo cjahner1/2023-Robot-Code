@@ -39,7 +39,7 @@ public class PhotonVisionSubsystem extends SubsystemBase {
    * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
    * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
    */
-  private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+  private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)); //TODO - adjust standard deviations
   private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
   private final SwerveDrivePoseEstimator poseEstimator;
@@ -66,7 +66,7 @@ public class PhotonVisionSubsystem extends SubsystemBase {
     ShuffleboardTab tab = Shuffleboard.getTab("Vision");
 
     poseEstimator =  new SwerveDrivePoseEstimator(
-        SwerveConstants.kinematics,
+        SwerveConstants.kinematics, //TODO IMPORTANT - change to correct kinematics from subsystem
         driveSubsystem.getGyroAngle(),
         driveSubsystem.getModulePositions(),
         new Pose2d(),
@@ -97,7 +97,7 @@ public class PhotonVisionSubsystem extends SubsystemBase {
         poseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(), resultTimestamp);
       }
     }
-    // Update pose estimator with drivetrain sensors
+    // Update pose estimator with swerve module positions and robot angle
     poseEstimator.update(
       driveSubsystem.getGyroAngle(),
       driveSubsystem.getModulePositions());
