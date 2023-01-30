@@ -11,6 +11,11 @@ import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -54,9 +59,35 @@ public class RobotContainer {
     Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
     Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
 
-    //uses triggers to cover edge case of detected color pulling a little switcharoo mid intake
-    m_driverController.a().and(isYellowTrigger).whileTrue(new IntakeCommand(hallwaySubsystem, "yellow"));
-    m_driverController.a().and(isPurpleTrigger).whileTrue(new IntakeCommand(hallwaySubsystem, "purple"));
+    ShuffleboardTab tab = Shuffleboard.getTab("Settings");
+    GenericEntry manualControl = tab.add("Manual Control", false).getEntry();
+
+    //no longer need a trigger for manual control because logic is handled in subsystem
+    //Trigger manualControlTrigger = new Trigger(() -> manualControl.getBoolean(false));
+
+    //uses triggers to cover edge case of detected color switching mid-intake
+    //only implementing triggers for base first and tip first until intake testing is complete
+    m_driverController.a()
+      .and(isYellowTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0));
+
+    m_driverController.a()
+      .and(isPurpleTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0));
+
+    m_driverController.a()
+      .and(isYellowTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2));
+
+    m_driverController.a()
+      .and(isPurpleTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2));
+
+    //codriver manual control buttons
   }
 
   /**
