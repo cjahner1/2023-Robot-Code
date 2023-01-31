@@ -8,18 +8,13 @@ import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.PhotonVisionConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -41,11 +36,12 @@ public class AlignCommand extends SequentialCommandGroup {
 
     double closestDistance = 0;
 
+    //if no goal is specified, find the closest one
     if (targetGoal == null) {
       //use list of goals for our alliance (2 seperate lists because field isnt symmetrical)
       List<Goal> goals = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? PhotonVisionConstants.blueGoals : PhotonVisionConstants.redGoals;
 
-      //if no goal is specified, find the closest one
+      //look for closest goal
       for(Goal goal : goals) {
 
         double distance = goal.getScoringPose().getTranslation().getDistance(vision.getCurrentPose().getTranslation());
@@ -60,7 +56,7 @@ public class AlignCommand extends SequentialCommandGroup {
     //generate trajectory to goal
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
       vision.getCurrentPose(),
-      List.of(new Translation2d(0, 0)), //TODO test that trajectory with no waypoints/blank waypoints works
+      List.of(), //TODO test that the straight line trajectory with no waypoints/blank waypoints works
       targetGoal.getScoringPose(),
       new TrajectoryConfig(AutoConstants.maxSpeedMetersPerSecond,
                           AutoConstants.maxAccelerationMetersPerSecondSquared)
@@ -68,7 +64,7 @@ public class AlignCommand extends SequentialCommandGroup {
           .setKinematics(SwerveConstants.kinematics)
     );
 
-    var thetaController =
+    ProfiledPIDController thetaController =
             new ProfiledPIDController(
                 AutoConstants.kPThetaController, 0, 0, AutoConstants.thetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
