@@ -68,7 +68,7 @@ public class AlignCommand extends SequentialCommandGroup {
           .setKinematics(SwerveConstants.kinematics)
     );
 
-    var thetaController =
+    ProfiledPIDController thetaController =
             new ProfiledPIDController(
                 AutoConstants.kPThetaController, 0, 0, AutoConstants.thetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);

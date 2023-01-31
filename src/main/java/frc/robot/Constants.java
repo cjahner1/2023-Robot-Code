@@ -7,6 +7,8 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.utils.Direction;
@@ -59,9 +61,18 @@ public final class Constants {
   }
 
   public static class PhotonVisionConstants {
-    public static Goal goal = new Goal(0, Direction.RIGHT, new Pose2d());
-    public static List<Goal> blueGoals = List.of(goal);
-    public static List<Goal> redGoals = List.of(goal);
+    public static List<Goal> blueGoals = List.of(
+      new Goal(0, Direction.RIGHT, new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0)))),
+      new Goal(0, Direction.RIGHT, new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0)))),
+      new Goal(0, Direction.RIGHT, new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0))))
+      );
+      
+    public static List<Goal> redGoals = List.of(
+      new Goal(0, Direction.RIGHT, new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0)))),
+      new Goal(0, Direction.RIGHT, new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0)))),
+      new Goal(0, Direction.RIGHT, new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0))))
+      );
+    
   }
 
   public static class SecondaryVisionConstants {
