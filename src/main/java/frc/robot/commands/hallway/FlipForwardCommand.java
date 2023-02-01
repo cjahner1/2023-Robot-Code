@@ -7,10 +7,10 @@ package frc.robot.commands.hallway;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.HallwaySubsystem;
 
-public class PurgeCommand extends CommandBase {
+public class FlipForwardCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
-  /** Creates a new PurgeCommand. */
-  public PurgeCommand(HallwaySubsystem _hallwaySubsystem) {
+  /** Creates a new FlipCommand. */
+  public FlipForwardCommand(HallwaySubsystem _hallwaySubsystem) {
     hallwaySubsystem = _hallwaySubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
@@ -23,13 +23,13 @@ public class PurgeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setIntake(-0.4);
+    hallwaySubsystem.setFlipper(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    hallwaySubsystem.setIntake(0);
+    hallwaySubsystem.setFlipper(0);
   }
 
   // Returns true when the command should end.

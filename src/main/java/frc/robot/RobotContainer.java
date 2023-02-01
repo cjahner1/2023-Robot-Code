@@ -4,8 +4,14 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
 
+import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.hallway.FlipForwardCommand;
+import frc.robot.commands.hallway.FlipReverseCommand;
+import frc.robot.commands.hallway.IntakeCommand;
+import frc.robot.commands.hallway.PurgeCommand;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.thrower.LowerCommand;
 import frc.robot.commands.thrower.PreThrowCommand;
 import frc.robot.commands.thrower.ResetEncoderCommand;
@@ -23,6 +29,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -34,19 +41,31 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  //subsystems
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
+
+  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem();
 
+  //commands
+  private final DriveCommand driveCommand = new DriveCommand();
 
+  //triggers
+  private final Trigger trigFlipForward = new Trigger(HallwaySubsystem::tipDetect);
+  private final Trigger trigFlipReverse = new Trigger(HallwaySubsystem::baseDetect);
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  //controllers
+  private final CommandXboxController controller1 = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Set default commands for subsystems
+    driveSubsystem.setDefaultCommand(driveCommand);
+
+    // Configure the trigger bindings
     configureBindings();
     configureThrowerSubsystem();
   }
@@ -62,6 +81,14 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
+    
+    //hallway
+    controller1.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    controller1.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    trigFlipForward.or(controller2.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
+    trigFlipReverse.or(controller2.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+
+    
     //thrower
     m_driverController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
     m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
