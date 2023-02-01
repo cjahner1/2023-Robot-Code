@@ -5,11 +5,13 @@
 package frc.robot.commands.hallway;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.HallwaySubsystem;
 
 public class IntakeCommand extends CommandBase {
   /** Creates a new IntakeCommand. */
-  public IntakeCommand() {
+  public IntakeCommand(HallwaySubsystem _subsystem, String _color, int orientation) {
     // Use addRequirements() here to declare subsystem dependencies.
+
   }
 
   // Called when the command is initially scheduled.
