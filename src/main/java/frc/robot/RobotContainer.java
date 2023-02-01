@@ -57,13 +57,13 @@ public class RobotContainer {
   private final Trigger trigFlipReverse = new Trigger(HallwaySubsystem::baseDetect);
 
   //controllers
-  private final CommandXboxController controller1 = new CommandXboxController(0);
-  private final CommandXboxController controller2 = new CommandXboxController(1);
+  private final CommandXboxController primaryController = new CommandXboxController(0);
+  private final CommandXboxController secondaryController = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Set default commands for subsystems
-    driveSubsystem.setDefaultCommand(driveCommand);
+    //driveSubsystem.setDefaultCommand(driveCommand);
 
     // Configure the trigger bindings
     configureBindings();
@@ -83,19 +83,19 @@ public class RobotContainer {
     //Configure button bindings
     
     //hallway
-    controller1.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    controller1.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-    trigFlipForward.or(controller2.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
-    trigFlipReverse.or(controller2.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf)); //TODO, create enums
+    primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    trigFlipForward.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
+    trigFlipReverse.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
 
     
     //thrower
-    m_driverController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
-    m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
-    m_driverController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
-    m_driverController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
+    primaryController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
+    primaryController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
+    primaryController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
+    primaryController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
 
-    m_driverController.a().whileTrue(new ResetEncoderCommand(throwerSubsystem));
+    primaryController.y().whileTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
   private void configureThrowerSubsystem() {
@@ -115,22 +115,22 @@ public class RobotContainer {
 
     //uses triggers to cover edge case of detected color switching mid-intake
     //only implementing triggers for base first and tip first until intake testing is complete
-    m_driverController.a()
+    primaryController.a()
       .and(isYellowTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
       .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0));
 
-    m_driverController.a()
+    primaryController.a()
       .and(isPurpleTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
       .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0));
 
-    m_driverController.a()
+    primaryController.a()
       .and(isYellowTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
       .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2));
 
-    m_driverController.a()
+    primaryController.a()
       .and(isPurpleTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
       .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2));

@@ -11,7 +11,8 @@ public class IntakeCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
   /** Creates a new IntakeCommand. */
 
-  public IntakeCommand(HallwaySubsystem _hallwaySubsystem, String _color, int orientation) {
+  public IntakeCommand(HallwaySubsystem hallwaySubsystem, String _color, int orientation) {
+    this.hallwaySubsystem = hallwaySubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
   }
