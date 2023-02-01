@@ -5,14 +5,23 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+
 import frc.robot.commands.thrower.LowerCommand;
 import frc.robot.commands.thrower.PreThrowCommand;
 import frc.robot.commands.thrower.ResetEncoderCommand;
 import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
+import frc.robot.Constants.SecondaryVisionConstants;
+import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
+import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,6 +37,7 @@ public class RobotContainer {
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
+  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem();
 
 
 
@@ -52,7 +62,6 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-
     //thrower
     m_driverController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
     m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
@@ -67,6 +76,39 @@ public class RobotContainer {
 
     //TODO: uncomment when motors dont need to be reset by hand
     //throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
+
+    Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
+    Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
+
+    ShuffleboardTab tab = Shuffleboard.getTab("Settings");
+    GenericEntry manualControl = tab.add("Manual Control", false).getEntry();
+
+    //no longer need a trigger for manual control because logic is handled in subsystem
+    //Trigger manualControlTrigger = new Trigger(() -> manualControl.getBoolean(false));
+
+    //uses triggers to cover edge case of detected color switching mid-intake
+    //only implementing triggers for base first and tip first until intake testing is complete
+    m_driverController.a()
+      .and(isYellowTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0));
+
+    m_driverController.a()
+      .and(isPurpleTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0));
+
+    m_driverController.a()
+      .and(isYellowTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2));
+
+    m_driverController.a()
+      .and(isPurpleTrigger)
+      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2));
+
+    //codriver manual control buttons
 
   }
 
