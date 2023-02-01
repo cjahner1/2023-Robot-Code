@@ -5,6 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+
+import frc.robot.commands.thrower.LowerCommand;
+import frc.robot.commands.thrower.PreThrowCommand;
+import frc.robot.commands.thrower.ResetEncoderCommand;
+import frc.robot.commands.thrower.ThrowCommand;
+import frc.robot.commands.thrower.TravelCommand;
 import frc.robot.Constants.SecondaryVisionConstants;
 import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.subsystems.HallwaySubsystem;
@@ -41,8 +47,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
     configureBindings();
+    configureThrowerSubsystem();
   }
 
   /**
@@ -56,6 +62,21 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
+    //thrower
+    m_driverController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
+    m_driverController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
+    m_driverController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
+    m_driverController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
+
+    m_driverController.a().whileTrue(new ResetEncoderCommand(throwerSubsystem));
+  }
+
+  private void configureThrowerSubsystem() {
+    //Configure thrower subsystem
+
+    //TODO: uncomment when motors dont need to be reset by hand
+    //throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
+
     Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
     Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
 
@@ -88,6 +109,7 @@ public class RobotContainer {
       .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2));
 
     //codriver manual control buttons
+
   }
 
   /**
