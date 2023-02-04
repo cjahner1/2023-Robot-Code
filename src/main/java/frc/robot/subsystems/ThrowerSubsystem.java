@@ -100,6 +100,7 @@ public class ThrowerSubsystem extends SubsystemBase {
     tab.addNumber("Primary Motor Velocity", primaryMotor::getSelectedSensorVelocity);
     tab.addNumber("Primary Motor Position", primaryMotor::getSelectedSensorPosition);
     tab.addNumber("Primary Motor Error", primaryMotor::getClosedLoopError);
+    tab.add(this);
   }
 
 }

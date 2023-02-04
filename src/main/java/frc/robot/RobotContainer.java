@@ -17,6 +17,7 @@ import frc.robot.commands.thrower.PreThrowCommand;
 import frc.robot.commands.thrower.ResetEncoderCommand;
 import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
+import frc.robot.commands.vision.ManualControl;
 import frc.robot.Constants.SecondaryVisionConstants;
 import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.subsystems.HallwaySubsystem;
@@ -25,8 +26,10 @@ import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -41,13 +44,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  ShuffleboardTab tab = Shuffleboard.getTab("Settings");
+  GenericEntry manualControl = tab.add("Manual Control", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+
   //subsystems
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
 
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem();
+  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem(manualControl);
 
   //commands
   private final DriveCommand driveCommand = new DriveCommand();
@@ -81,6 +87,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
+    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
     
     //hallway
     primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf)); //TODO, create enums
@@ -107,9 +114,6 @@ public class RobotContainer {
     Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
     Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
 
-    ShuffleboardTab tab = Shuffleboard.getTab("Settings");
-    GenericEntry manualControl = tab.add("Manual Control", false).getEntry();
-
     //no longer need a trigger for manual control because logic is handled in subsystem
     //Trigger manualControlTrigger = new Trigger(() -> manualControl.getBoolean(false));
 
@@ -118,24 +122,26 @@ public class RobotContainer {
     primaryController.a()
       .and(isYellowTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0));
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).alongWith(new LowerCommand(throwerSubsystem)));
 
     primaryController.a()
       .and(isPurpleTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0));
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0).alongWith(new LowerCommand(throwerSubsystem)));
 
     primaryController.a()
       .and(isYellowTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2));
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2).alongWith(new LowerCommand(throwerSubsystem)));
 
     primaryController.a()
       .and(isPurpleTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2));
+      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2).alongWith(new LowerCommand(throwerSubsystem)));
 
     //codriver manual control buttons
+    secondaryController.y().whileTrue(new ManualControl(secondaryVisionSubsystem, "yellow")); //TODO more enums
+    secondaryController.x().whileTrue(new ManualControl(secondaryVisionSubsystem, "purple"));
 
   }
 

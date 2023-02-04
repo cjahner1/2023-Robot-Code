@@ -56,7 +56,7 @@ public final class Constants {
     public static int loadPosition = 15000;
     public static int travelPosition = 25000;
     public static int preShootPosition = 35000;
-    public static int throwPosition = 55000;
+    public static int throwPosition = 40000;
 
     
   }
