@@ -10,8 +10,8 @@ import frc.robot.subsystems.HallwaySubsystem;
 public class PurgeCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
   /** Creates a new PurgeCommand. */
-  public PurgeCommand(HallwaySubsystem _hallwaySubsystem) {
-    hallwaySubsystem = _hallwaySubsystem;
+  public PurgeCommand(HallwaySubsystem hallwaySubsystem) {
+    this.hallwaySubsystem = hallwaySubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
   }
@@ -23,7 +23,7 @@ public class PurgeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setIntake(-0.4);
+    hallwaySubsystem.setIntake(-300);
   }
 
   // Called once the command ends or is interrupted.

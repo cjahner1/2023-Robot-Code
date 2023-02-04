@@ -11,26 +11,21 @@ import frc.robot.commands.hallway.FlipReverseCommand;
 import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.commands.hallway.PurgeCommand;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.thrower.LowerCommand;
 import frc.robot.commands.thrower.PreThrowCommand;
 import frc.robot.commands.thrower.ResetEncoderCommand;
 import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
-import frc.robot.commands.vision.ManualControl;
-import frc.robot.Constants.SecondaryVisionConstants;
-import frc.robot.commands.hallway.IntakeCommand;
+//import frc.robot.Constants.SecondaryVisionConstants;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
-import frc.robot.subsystems.SecondaryVisionSubsystem;
+//import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.networktables.GenericEntry;
+//import edu.wpi.first.networktables.NetworkTableEntry;
+//import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+//import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+//import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -44,19 +39,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  ShuffleboardTab tab = Shuffleboard.getTab("Settings");
-  GenericEntry manualControl = tab.add("Manual Control", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+  //ShuffleboardTab tab = Shuffleboard.getTab("Settings");
+  //GenericEntry manualControl = tab.add("Manual Control", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
   //subsystems
-  private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
+  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
-
-  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem(manualControl);
-
-  //commands
-  private final DriveCommand driveCommand = new DriveCommand();
+  private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
+  //private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem(manualControl);
 
   //triggers
   private final Trigger trigFlipForward = new Trigger(HallwaySubsystem::tipDetect);
@@ -69,11 +60,12 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Set default commands for subsystems
-    //driveSubsystem.setDefaultCommand(driveCommand);
+    driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem));
+    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
 
     // Configure the trigger bindings
     configureBindings();
-    configureThrowerSubsystem();
+    //configureThrowerSubsystem();
   }
 
   /**
@@ -87,11 +79,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
     
     //hallway
-    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf)); //TODO, create enums
+    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf)); //TODO, create enums
     primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+
     trigFlipForward.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
     trigFlipReverse.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
 
@@ -105,6 +97,7 @@ public class RobotContainer {
     primaryController.y().whileTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
+  /*
   private void configureThrowerSubsystem() {
     //Configure thrower subsystem
 
@@ -138,12 +131,7 @@ public class RobotContainer {
       .and(isPurpleTrigger)
       .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
       .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2).alongWith(new LowerCommand(throwerSubsystem)));
-
-    //codriver manual control buttons
-    secondaryController.y().whileTrue(new ManualControl(secondaryVisionSubsystem, "yellow")); //TODO more enums
-    secondaryController.x().whileTrue(new ManualControl(secondaryVisionSubsystem, "purple"));
-
-  }
+  } */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

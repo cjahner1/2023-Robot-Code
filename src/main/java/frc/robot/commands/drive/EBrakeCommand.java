@@ -5,11 +5,15 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class EBrakeCommand extends CommandBase {
+  private DriveSubsystem driveSubsystem;
   /** Creates a new EBrakeCommand. */
-  public EBrakeCommand() {
+  public EBrakeCommand(DriveSubsystem driveSubsystem) {
+    this.driveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(driveSubsystem);
   }
 
   // Called when the command is initially scheduled.

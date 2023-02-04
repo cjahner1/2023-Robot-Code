@@ -10,8 +10,8 @@ import frc.robot.subsystems.HallwaySubsystem;
 public class FlipReverseCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
   /** Creates a new FlipCommand. */
-  public FlipReverseCommand(HallwaySubsystem _hallwaySubsystem) {
-    hallwaySubsystem = _hallwaySubsystem;
+  public FlipReverseCommand(HallwaySubsystem hallwaySubsystem) {
+    this.hallwaySubsystem = hallwaySubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
   }
@@ -23,7 +23,7 @@ public class FlipReverseCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setFlipper(-0.5);
+    hallwaySubsystem.setFlipper(-400);
   }
 
   // Called once the command ends or is interrupted.

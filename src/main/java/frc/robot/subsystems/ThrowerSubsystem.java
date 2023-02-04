@@ -14,93 +14,89 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ThrowerConstants;
 
 public class ThrowerSubsystem extends SubsystemBase {
-  private WPI_TalonFX primaryMotor;
-  //private WPI_TalonFX secondaryMotor;
+  private WPI_TalonFX thrower1 = new WPI_TalonFX(13);
+  private WPI_TalonFX thrower2 = new WPI_TalonFX(14);
 
   /** Creates a new ThrowerSubsystem. */
   public ThrowerSubsystem() {
-    primaryMotor = new WPI_TalonFX(ThrowerConstants.primaryMotorID);
+    thrower2.configFactoryDefault();
+    thrower2.configFactoryDefault();
 
-    primaryMotor.configFactoryDefault();
-    primaryMotor.setNeutralMode(NeutralMode.Brake);
-    primaryMotor.setInverted(ThrowerConstants.primaryMotorInverted);
+    thrower2.setNeutralMode(NeutralMode.Brake);
+    thrower2.setNeutralMode(NeutralMode.Brake);
+
+    thrower1.setInverted(false);
+    thrower2.setInverted(true);
+
+    thrower2.follow(thrower1);
+
+    //slot 0
+    thrower1.config_kP(0, ThrowerConstants.throwkP);
+    thrower1.config_kI(0, ThrowerConstants.throwkI);
+    thrower1.config_kD(0, ThrowerConstants.throwkD);
+    thrower1.config_kF(0, ThrowerConstants.throwkF);
+    //slot 1
+    thrower1.config_kP(1, ThrowerConstants.travelkP);
+    thrower1.config_kI(1, ThrowerConstants.travelkI);
+    thrower1.config_kD(1, ThrowerConstants.travelkD);
+    thrower1.config_kF(1, ThrowerConstants.travelkF);
+
     resetEncoders();
-
-    //secondaryMotor.configFactoryDefault()
-    configurePIDSlots();
-
     configureShuffleboard();
+  }
+  
+  //check to see if the motor is at the target position
+  public boolean motionProfileFinished() {
+    return (thrower1.getClosedLoopError() < ThrowerConstants.motionProfileTolerance);
+  }
+  public void resetEncoders() {
+    thrower1.setSelectedSensorPosition(0);
+  }
 
+  public void setLoadPosition() {
+    configureMovement();
+    thrower1.set(ControlMode.MotionMagic, ThrowerConstants.loadPosition);
+  }
+
+  public void setTravelPosition() {
+    configureMovement();
+    thrower1.set(ControlMode.MotionMagic, ThrowerConstants.travelPosition);
+  }
+
+  public void setPreThrowPosition() {
+    configureMovement();
+    thrower1.set(ControlMode.MotionMagic, ThrowerConstants.preShootPosition);
+  }
+
+  public void setThrowPosition() {
+    configureThrowing();
+    thrower1.set(ControlMode.MotionMagic, ThrowerConstants.throwPosition);
+  }
+
+  //Configures motor's pid and motion magic to be more stable for travel
+  public void configureMovement() {
+    thrower1.configMotionAcceleration(ThrowerConstants.travelAcceleration);
+    thrower1.configMotionCruiseVelocity(ThrowerConstants.travelCruiseVelocity);
+    thrower1.configMotionSCurveStrength(ThrowerConstants.travelProfileSmoothing);
+  }
+
+  //configures motor's pid and motion magic to be more powerful for launching
+  public void configureThrowing() {
+    thrower1.configMotionAcceleration(ThrowerConstants.throwAcceleration);
+    thrower1.configMotionCruiseVelocity(ThrowerConstants.throwCruiseVelocity);
+    thrower1.configMotionSCurveStrength(ThrowerConstants.throwProfileSmoothing);
+  }
+
+  public void configureShuffleboard() {
+    ShuffleboardTab tab = Shuffleboard.getTab("Thrower");
+    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates
+    tab.addNumber("Primary Motor Velocity", thrower1::getSelectedSensorVelocity);
+    tab.addNumber("Primary Motor Position", thrower1::getSelectedSensorPosition);
+    tab.addNumber("Primary Motor Error", thrower1::getClosedLoopError);
+    tab.add(this);
   }
 
   @Override
   public void periodic() {
   }
-  
-  //check to see if the motor is at the target position
-  public boolean motionProfileFinished() {
-    return primaryMotor.getClosedLoopError() < ThrowerConstants.motionProfileTolerance;
-  }
-  public void resetEncoders() {
-    primaryMotor.setSelectedSensorPosition(0);
-  }
-
-  public void setLoadPosition() {
-    configureMovement();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.loadPosition);
-  }
-
-  public void setTravelPosition() {
-    configureMovement();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.travelPosition);
-  }
-
-  public void setPreThrowPosition() {
-    configureMovement();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.preShootPosition);
-  }
-
-  public void setThrowPosition() {
-    configureThrowing();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.throwPosition);
-  }
-
-  //Configures motor's pid and motion magic to be more stable for travel
-  public void configureMovement() {
-    primaryMotor.configMotionAcceleration(ThrowerConstants.travelAcceleration);
-    primaryMotor.configMotionCruiseVelocity(ThrowerConstants.travelCruiseVelocity);
-    primaryMotor.configMotionSCurveStrength(ThrowerConstants.travelProfileSmoothing);
-  }
-
-  //configures motor's pid and motion magic to be more powerful for launching
-  public void configureThrowing() {
-    primaryMotor.configMotionAcceleration(ThrowerConstants.throwAcceleration);
-    primaryMotor.configMotionCruiseVelocity(ThrowerConstants.throwCruiseVelocity);
-    primaryMotor.configMotionSCurveStrength(ThrowerConstants.throwProfileSmoothing);
-  }
-
-  //configures pid slots for the motor, slot 0 for throw, slot 1 for traveling
-  public void configurePIDSlots() {
-    //slot 0
-    primaryMotor.config_kP(0, ThrowerConstants.throwkP);
-    primaryMotor.config_kI(0, ThrowerConstants.throwkI);
-    primaryMotor.config_kD(0, ThrowerConstants.throwkD);
-    primaryMotor.config_kF(0, ThrowerConstants.throwkF);
-    //slot 1
-    primaryMotor.config_kP(1, ThrowerConstants.travelkP);
-    primaryMotor.config_kI(1, ThrowerConstants.travelkI);
-    primaryMotor.config_kD(1, ThrowerConstants.travelkD);
-    primaryMotor.config_kF(1, ThrowerConstants.travelkF);
-    
-
-  }
-  public void configureShuffleboard() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Thrower");
-    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates
-    tab.addNumber("Primary Motor Velocity", primaryMotor::getSelectedSensorVelocity);
-    tab.addNumber("Primary Motor Position", primaryMotor::getSelectedSensorPosition);
-    tab.addNumber("Primary Motor Error", primaryMotor::getClosedLoopError);
-    tab.add(this);
-  }
-
 }

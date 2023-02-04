@@ -10,9 +10,9 @@ import frc.robot.subsystems.ThrowerSubsystem;
 public class ResetEncoderCommand extends CommandBase {
   /** Creates a new ResetEncoderCommand. */
   ThrowerSubsystem throwerSubsystem;
-  public ResetEncoderCommand(ThrowerSubsystem _throwerSubsystem) {
+  public ResetEncoderCommand(ThrowerSubsystem throwerSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    throwerSubsystem = _throwerSubsystem;
+    this.throwerSubsystem = throwerSubsystem;
     addRequirements(throwerSubsystem);
   }
 

@@ -21,9 +21,9 @@ public class HallwaySubsystem extends SubsystemBase {
   private WPI_TalonFX flipper1fx = new WPI_TalonFX(11);
   private WPI_TalonFX flipper2fx = new WPI_TalonFX(12);
 
-  private NetworkTable table = NetworkTableInstance.getDefault().getTable("camera");
-  private StringSubscriber color = table.getStringTopic("color").subscribe("error");
-  private IntegerSubscriber orientation = table.getIntegerTopic("orientation").subscribe(-1);
+  private static NetworkTable table = NetworkTableInstance.getDefault().getTable("camera");
+  private static StringSubscriber color = table.getStringTopic("color").subscribe("error");
+  private static IntegerSubscriber orientation = table.getIntegerTopic("orientation").subscribe(-1);
 
   private static SendableChooser<Boolean> cameraChoose = new SendableChooser<>();
 
@@ -59,11 +59,22 @@ public class HallwaySubsystem extends SubsystemBase {
     flipper1fx.set(ControlMode.Velocity, vel);
   }
 
+  private static String getColor() {
+    //TODO fix this
+    return color.get();
+  }
+
+  private static int getOrientation() {
+    return (int)orientation.get();
+    //TODO manual control/fix
+  }
+
   public static boolean tipDetect() {
     if(cameraChoose.getSelected()){
-      boolean placeholder=false;
-      if(placeholder){
-        return true;
+      if(getColor().equals("yellow")){
+        if(getOrientation() == 2){
+          return true;
+        }
       }
     }
     return false;
@@ -71,89 +82,26 @@ public class HallwaySubsystem extends SubsystemBase {
 
   public static boolean baseDetect() {
     if(cameraChoose.getSelected()){
-      boolean placeholder=false;
-      if(placeholder){
-        return true;
+      if(getColor().equals("yellow")){
+        if(getOrientation() == 0){
+          return true;
+        }
       }
     }
     return false;
   }
+  
+  //public boolean cubeDetect() {
+  //  if(cameraChoose.getSelected()){
+  //    if(color.get().equals("purple")){
+  //      return true;
+  //    }
+  //  }
+  //  return false;
+  //}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-
-  private boolean manualControl;
-  private boolean manualYellow;
-  private boolean manualPurple;
-  private ShuffleboardTab hallwayTab;
-  private GenericEntry manualControlWidget;
-  private GenericEntry isPurple;
-  private GenericEntry isYellow;
-  /** Creates a new SecondaryVisionSubsystem. */
-  
-    //cone orientation is 0 for tip away, 1 for tip right, 2 for tip close, 3 for tip left, 4 for upright, -1 for error
-    //Note: all orientations may not be used
-
-    manualYellow = false;
-    manualPurple = false;
-    
-    hallwayTab = Shuffleboard.getTab("Hallwayy");
-    hallwayTab.addBoolean("isYellow", this::isYellow);
-    hallwayTab.addBoolean("isPurple", this::isPurple);
-
-    this.manualControlWidget = manualControlWidget;
-  }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putBoolean("isPurple", isPurple());
-    SmartDashboard.putBoolean("isYellow", isYellow());
-  }
-
-  public String getColor() {
-    //TODO fix this
-    return color.get();
-  }
-
-  public boolean manualControlEnabled() {
-    //return manualControlWidget.getBoolean(false);
-    return true;
-  }
-
-  public void setYellow() {
-    manualYellow = true;
-    manualPurple = false;
-    System.out.println("Set Yellow");
-  }
-
-  public void setPurple() {
-    manualYellow = false;
-    manualPurple = true;
-  }
-
-  public boolean isYellow() {
-    System.out.println("Manual contrl: " + manualYellow);
-    if(manualControlEnabled()) {
-      System.out.println("Manual Control check");
-      return manualYellow;
-    } else {
-      System.out.println("Manual Control not check");
-      return this.color.get().equals("yellow");
-    }   
-  }
-
-  public boolean isPurple() {
-    if(manualControlEnabled()) {
-      return manualPurple;
-    } else {
-      return this.color.get().equals("purple");
-    } 
-  }
-
-  public int getOrientation() {
-    //return (int) orientation.get();
-    return 0; //TODO manual control/fix
   }
 }

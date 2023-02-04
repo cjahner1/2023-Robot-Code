@@ -10,8 +10,8 @@ import frc.robot.subsystems.ThrowerSubsystem;
 public class TravelCommand extends CommandBase {
   /** Creates a new TravelCommand. */
   ThrowerSubsystem throwerSubsystem;
-  public TravelCommand(ThrowerSubsystem _throwerSubsystem) {
-    throwerSubsystem = _throwerSubsystem;
+  public TravelCommand(ThrowerSubsystem throwerSubsystem) {
+    this.throwerSubsystem = throwerSubsystem;
 
     addRequirements(throwerSubsystem);
   }
