@@ -9,9 +9,13 @@ import frc.robot.subsystems.HallwaySubsystem;
 
 public class IntakeCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
+  private String color; //todo enums
   /** Creates a new IntakeCommand. */
 
-  public IntakeCommand(HallwaySubsystem _hallwaySubsystem, String _color, int orientation) {
+  public IntakeCommand(HallwaySubsystem hallwaySubsystem, String _color, int orientation) {
+    this.hallwaySubsystem = hallwaySubsystem;
+    color = _color;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
   }
@@ -23,7 +27,11 @@ public class IntakeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setIntake(0.2);
+    if(color == "yellow") {
+      hallwaySubsystem.setIntake(0.2);
+    } else if(color == "purple") {
+      hallwaySubsystem.setIntake(-0.2);
+    }
   }
 
   // Called once the command ends or is interrupted.
