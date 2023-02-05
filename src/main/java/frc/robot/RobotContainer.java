@@ -24,6 +24,11 @@ import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
+import frc.robot.utils.GamePiece;
+import frc.robot.utils.Orientation;
+
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -43,37 +48,50 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  ShuffleboardTab tab = Shuffleboard.getTab("Settings");
-  GenericEntry manualControl = tab.add("Manual Control", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-
   //subsystems
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
-
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem(manualControl);
+  private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem();
 
   //commands
   private final DriveCommand driveCommand = new DriveCommand();
+  private final PurgeCommand purgeCommand = new PurgeCommand(hallwaySubsystem);
+  private final IntakeCommand intakeCommand = new IntakeCommand(hallwaySubsystem, secondaryVisionSubsystem);
+  private final LowerCommand lowerCommand = new LowerCommand(throwerSubsystem);
 
   //triggers
-  private final Trigger trigFlipForward = new Trigger(HallwaySubsystem::tipDetect);
-  private final Trigger trigFlipReverse = new Trigger(HallwaySubsystem::baseDetect);
+  private final Trigger trigFlipForward = new Trigger(() -> (secondaryVisionSubsystem.getOrientation() == Orientation.TIP_FORWARD));
+  private final Trigger trigFlipReverse = new Trigger(() -> (secondaryVisionSubsystem.getOrientation() == Orientation.BASE_FORWARD));
 
   //controllers
   private final CommandXboxController primaryController = new CommandXboxController(0);
   private final CommandXboxController secondaryController = new CommandXboxController(1);
+
+  //button names
+  private Trigger throwButton;
+  private Trigger intakeButton;
+  private Trigger purgeButton;
+  private Trigger manualSetConeButton;
+  private Trigger manualSetCubeButton;
+
+  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Set default commands for subsystems
     //driveSubsystem.setDefaultCommand(driveCommand);
 
-    // Configure the trigger bindings
+    // Configure button map
     configureBindings();
+    
+    //configure commands to run for each subsystem
     configureThrowerSubsystem();
+    configureHallwaySubsystem();
+
+    //default commands
+    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
   }
 
   /**
@@ -87,63 +105,41 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
-    
-    //hallway
-    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf)); //TODO, create enums
-    primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-    trigFlipForward.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
-    trigFlipReverse.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+    throwButton = primaryController.a();
+    intakeButton = primaryController.rightTrigger(0.2);
+    purgeButton = primaryController.rightBumper();
 
-    
-    //thrower
+    manualSetCubeButton = secondaryController.x();
+    manualSetConeButton = secondaryController.y();
+  
+  }
+
+  private void configureHallwaySubsystem() {
+    //Configure hallway subsystem
+    intakeButton.whileTrue(intakeCommand.alongWith(lowerCommand));
+    purgeButton.whileTrue(purgeCommand.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    //only run the flipper while intaking
+    trigFlipForward.or(secondaryController.y()).and(intakeCommand::isScheduled).whileTrue(new FlipForwardCommand(hallwaySubsystem)); //TODO: add manual control logic to secondaryVisionSubsystem.getOrientation() for manual control and remove .or
+    trigFlipReverse.or(secondaryController.a()).and(intakeCommand::isScheduled).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+  }
+
+  private void configureThrowerSubsystem() {
+    //Configure thrower subsystem
+
+    //thrower manual control buttons, really for debugging purposes only, will likely add to codriver controller in a way that cant accidentally be triggered
     primaryController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
     primaryController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
     primaryController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
     primaryController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
 
     primaryController.y().whileTrue(new ResetEncoderCommand(throwerSubsystem));
-  }
-
-  private void configureThrowerSubsystem() {
-    //Configure thrower subsystem
-
-    //TODO: uncomment when motors dont need to be reset by hand
-    //throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
-
-    Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
-    Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
-
-    //no longer need a trigger for manual control because logic is handled in subsystem
-    //Trigger manualControlTrigger = new Trigger(() -> manualControl.getBoolean(false));
-
-    //uses triggers to cover edge case of detected color switching mid-intake
-    //only implementing triggers for base first and tip first until intake testing is complete
-    primaryController.a()
-      .and(isYellowTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).alongWith(new LowerCommand(throwerSubsystem)));
-
-    primaryController.a()
-      .and(isPurpleTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0).alongWith(new LowerCommand(throwerSubsystem)));
-
-    primaryController.a()
-      .and(isYellowTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2).alongWith(new LowerCommand(throwerSubsystem)));
-
-    primaryController.a()
-      .and(isPurpleTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2).alongWith(new LowerCommand(throwerSubsystem)));
 
     //codriver manual control buttons
-    secondaryController.y().whileTrue(new ManualControl(secondaryVisionSubsystem, "yellow")); //TODO more enums
-    secondaryController.x().whileTrue(new ManualControl(secondaryVisionSubsystem, "purple"));
+    manualSetConeButton.whileTrue(new ManualControl(secondaryVisionSubsystem, GamePiece.CONE));
+    manualSetCubeButton.whileTrue(new ManualControl(secondaryVisionSubsystem, GamePiece.CUBE));
 
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

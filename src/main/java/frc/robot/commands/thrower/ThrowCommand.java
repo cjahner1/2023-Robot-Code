@@ -9,9 +9,8 @@ import frc.robot.subsystems.ThrowerSubsystem;
 
 public class ThrowCommand extends CommandBase {
   ThrowerSubsystem throwerSubsystem;
-  public ThrowCommand(ThrowerSubsystem _throwerSubsystem) {
-    throwerSubsystem = _throwerSubsystem;
-    
+  public ThrowCommand(ThrowerSubsystem throwerSubsystem) {
+    this.throwerSubsystem = throwerSubsystem;
     addRequirements(throwerSubsystem);
   }
 

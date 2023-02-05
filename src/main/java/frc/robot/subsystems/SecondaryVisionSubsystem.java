@@ -10,11 +10,14 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringSubscriber;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utils.GamePiece;
+import frc.robot.utils.Orientation;
 
 public class SecondaryVisionSubsystem extends SubsystemBase {
   private NetworkTable table;
@@ -28,11 +31,12 @@ public class SecondaryVisionSubsystem extends SubsystemBase {
   private GenericEntry isPurple;
   private GenericEntry isYellow;
   /** Creates a new SecondaryVisionSubsystem. */
-  public SecondaryVisionSubsystem(GenericEntry manualControlWidget) {
+  public SecondaryVisionSubsystem() {
+    ShuffleboardTab tab = Shuffleboard.getTab("Settings");
+    GenericEntry manualControlWidget = tab.add("Manual Control", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    
     table = NetworkTableInstance.getDefault().getTable("camera");
     color = table.getStringTopic("color").subscribe("error");
-    //cone orientation is 0 for tip away, 1 for tip right, 2 for tip close, 3 for tip left, 4 for upright, -1 for error
-    //Note: all orientations may not be used
     orientation = table.getIntegerTopic("orientation").subscribe(-1);
 
     manualYellow = false;
@@ -61,17 +65,27 @@ public class SecondaryVisionSubsystem extends SubsystemBase {
     return true;
   }
 
-  public void setYellow() {
+  public void setCone() {
     manualYellow = true;
     manualPurple = false;
     System.out.println("Set Yellow");
   }
 
-  public void setPurple() {
+  public void setCube() {
     manualYellow = false;
     manualPurple = true;
   }
 
+  public GamePiece getGamePiece() {
+    if(isYellow()) {
+      return GamePiece.CONE;
+    } else if(isPurple()) {
+      return GamePiece.CUBE;
+    } else {
+      return GamePiece.NONE;
+    }
+  }
+  
   public boolean isYellow() {
     System.out.println("Manual contrl: " + manualYellow);
     if(manualControlEnabled()) {
@@ -91,8 +105,8 @@ public class SecondaryVisionSubsystem extends SubsystemBase {
     } 
   }
 
-  public int getOrientation() {
+  public Orientation getOrientation() {
     //return (int) orientation.get();
-    return 0; //TODO manual control/fix
+    return Orientation.BASE_FORWARD; //TODO manual control/fix
   }
 }

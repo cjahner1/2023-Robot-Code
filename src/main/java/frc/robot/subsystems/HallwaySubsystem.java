@@ -43,32 +43,12 @@ public class HallwaySubsystem extends SubsystemBase {
     cameraChoose.addOption("Manual Flip", false);
   }
 
-  public void setIntake(double percent){
-    intake1fx.set(ControlMode.PercentOutput, percent);
+  public void setIntake(double velocity){
+    intake1fx.set(ControlMode.Velocity, velocity);
   }
 
-  public void setFlipper(double percent){
-    flipper1fx.set(ControlMode.PercentOutput, percent);
-  }
-
-  public static boolean tipDetect() {
-    if(cameraChoose.getSelected()){
-      boolean placeholder=false;
-      if(placeholder){
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public static boolean baseDetect() {
-    if(cameraChoose.getSelected()){
-      boolean placeholder=false;
-      if(placeholder){
-        return true;
-      }
-    }
-    return false;
+  public void setFlipper(double velocity){
+    flipper1fx.set(ControlMode.Velocity, velocity);
   }
 
   @Override

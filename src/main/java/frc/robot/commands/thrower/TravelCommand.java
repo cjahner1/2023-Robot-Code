@@ -10,9 +10,8 @@ import frc.robot.subsystems.ThrowerSubsystem;
 public class TravelCommand extends CommandBase {
   /** Creates a new TravelCommand. */
   ThrowerSubsystem throwerSubsystem;
-  public TravelCommand(ThrowerSubsystem _throwerSubsystem) {
-    throwerSubsystem = _throwerSubsystem;
-
+  public TravelCommand(ThrowerSubsystem throwerSubsystem) {
+    this.throwerSubsystem = throwerSubsystem;
     addRequirements(throwerSubsystem);
   }
 
@@ -29,7 +28,7 @@ public class TravelCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //end beheivor handled by default command
+    //end behavior handled by default command
   }
 
   // Returns true when the command should end.

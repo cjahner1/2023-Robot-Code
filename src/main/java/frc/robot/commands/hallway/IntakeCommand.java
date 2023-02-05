@@ -4,20 +4,24 @@
 
 package frc.robot.commands.hallway;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.HallwaySubsystem;
+import frc.robot.subsystems.SecondaryVisionSubsystem;
+import frc.robot.utils.GamePiece;
 
 public class IntakeCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
-  private String color; //todo enums
+  private Supplier<GamePiece> gamePiece;
   /** Creates a new IntakeCommand. */
 
-  public IntakeCommand(HallwaySubsystem hallwaySubsystem, String _color, int orientation) {
+  public IntakeCommand(HallwaySubsystem hallwaySubsystem, SecondaryVisionSubsystem secondaryVisionSubsystem) {
     this.hallwaySubsystem = hallwaySubsystem;
-    color = _color;
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(hallwaySubsystem);
+    this.gamePiece = secondaryVisionSubsystem::getGamePiece;
+
+    addRequirements(hallwaySubsystem, secondaryVisionSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -27,9 +31,11 @@ public class IntakeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(color == "yellow") {
+    //TODO: add logic for intake orientation
+    if(gamePiece.get() == GamePiece.CONE) {
       hallwaySubsystem.setIntake(0.2);
-    } else if(color == "purple") {
+    } 
+    else if(gamePiece.get() == GamePiece.CUBE) {
       hallwaySubsystem.setIntake(-0.2);
     }
   }
