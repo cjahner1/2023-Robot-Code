@@ -25,6 +25,7 @@ public final class Constants {
   public static class ThrowerConstants {
 
     public static final int primaryMotorID = 5;
+    public static final int secondaryMotorID = 6;
 
     public static final boolean primaryMotorInverted = false;
     public static final boolean secondaryMotorInverted = false;
@@ -55,7 +56,7 @@ public final class Constants {
     //Encoder position values
     public static int loadPosition = 15000;
     public static int travelPosition = 25000;
-    public static int preShootPosition = 35000;
+    public static int preThrowPosition = 35000;
     public static int throwPosition = 40000;
 
     

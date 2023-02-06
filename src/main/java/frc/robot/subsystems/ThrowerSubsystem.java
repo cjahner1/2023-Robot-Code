@@ -12,23 +12,29 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ThrowerConstants;
+import frc.robot.utils.Position;
 
 public class ThrowerSubsystem extends SubsystemBase {
   private WPI_TalonFX primaryMotor;
+  private WPI_TalonFX secondaryMotor;
   //private WPI_TalonFX secondaryMotor;
 
   /** Creates a new ThrowerSubsystem. */
   public ThrowerSubsystem() {
     primaryMotor = new WPI_TalonFX(ThrowerConstants.primaryMotorID);
+    secondaryMotor = new WPI_TalonFX(ThrowerConstants.secondaryMotorID);
 
     primaryMotor.configFactoryDefault();
     primaryMotor.setNeutralMode(NeutralMode.Brake);
     primaryMotor.setInverted(ThrowerConstants.primaryMotorInverted);
+
+    secondaryMotor.configFactoryDefault();
+    secondaryMotor.setInverted(!ThrowerConstants.primaryMotorInverted); //secondary motor needs to go opposite direction of primary motor
+    secondaryMotor.setNeutralMode(NeutralMode.Brake);
+    secondaryMotor.follow(primaryMotor);
+
     resetEncoders();
-
-    //secondaryMotor.configFactoryDefault()
     configurePIDSlots();
-
     configureShuffleboard();
 
   }
@@ -45,24 +51,29 @@ public class ThrowerSubsystem extends SubsystemBase {
     primaryMotor.setSelectedSensorPosition(0);
   }
 
-  public void setLoadPosition() {
-    configureMovement();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.loadPosition);
-  }
-
-  public void setTravelPosition() {
-    configureMovement();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.travelPosition);
-  }
-
-  public void setPreThrowPosition() {
-    configureMovement();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.preShootPosition);
-  }
-
-  public void setThrowPosition() {
-    configureThrowing();
-    primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.throwPosition);
+  public void setPosition(Position position) {
+    switch (position) {
+      case INTAKE:
+        configureMovement();
+        primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.loadPosition);
+        break;
+      case TRAVEL:
+        configureMovement();
+        primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.travelPosition);
+        break;
+      case PRE_THROW:
+        configureMovement();
+        primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.preThrowPosition);
+        break;
+      case THROW_CONE:
+        configureThrowing();
+        primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.throwPosition);
+        break;
+      case THROW_CUBE: //TODO: cube positon and setup function
+        configureThrowing();
+        primaryMotor.set(ControlMode.MotionMagic, ThrowerConstants.throwPosition);
+        break;
+    }
   }
 
   //Configures motor's pid and motion magic to be more stable for travel
@@ -80,6 +91,7 @@ public class ThrowerSubsystem extends SubsystemBase {
   }
 
   //configures pid slots for the motor, slot 0 for throw, slot 1 for traveling
+  //TODO: cube slot
   public void configurePIDSlots() {
     //slot 0
     primaryMotor.config_kP(0, ThrowerConstants.throwkP);
@@ -96,7 +108,7 @@ public class ThrowerSubsystem extends SubsystemBase {
   }
   public void configureShuffleboard() {
     ShuffleboardTab tab = Shuffleboard.getTab("Thrower");
-    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates
+    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates periodically
     tab.addNumber("Primary Motor Velocity", primaryMotor::getSelectedSensorVelocity);
     tab.addNumber("Primary Motor Position", primaryMotor::getSelectedSensorPosition);
     tab.addNumber("Primary Motor Error", primaryMotor::getClosedLoopError);

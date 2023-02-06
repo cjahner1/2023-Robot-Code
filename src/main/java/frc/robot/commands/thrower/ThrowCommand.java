@@ -6,6 +6,7 @@ package frc.robot.commands.thrower;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ThrowerSubsystem;
+import frc.robot.utils.Position;
 
 public class ThrowCommand extends CommandBase {
   ThrowerSubsystem throwerSubsystem;
@@ -17,7 +18,7 @@ public class ThrowCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    throwerSubsystem.setThrowPosition();
+    throwerSubsystem.setPosition(Position.THROW_CONE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
