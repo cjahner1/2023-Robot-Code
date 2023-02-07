@@ -6,36 +6,22 @@ package frc.robot;
 
 
 import frc.robot.commands.drive.DriveCommand;
-import frc.robot.commands.hallway.FlipForwardCommand;
-import frc.robot.commands.hallway.FlipReverseCommand;
+import frc.robot.commands.hallway.FlipCommand;
 import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.commands.hallway.PurgeCommand;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.thrower.LowerCommand;
 import frc.robot.commands.thrower.PreThrowCommand;
 import frc.robot.commands.thrower.ResetEncoderCommand;
 import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
 import frc.robot.commands.vision.ManualControl;
-import frc.robot.Constants.SecondaryVisionConstants;
-import frc.robot.commands.hallway.IntakeCommand;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.Orientation;
-
-import java.util.function.BooleanSupplier;
-
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -56,10 +42,11 @@ public class RobotContainer {
   private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem();
 
   //commands
-  private final DriveCommand driveCommand = new DriveCommand();
+  private final DriveCommand driveCommand = new DriveCommand(driveSubsystem);
   private final PurgeCommand purgeCommand = new PurgeCommand(hallwaySubsystem);
   private final IntakeCommand intakeCommand = new IntakeCommand(hallwaySubsystem, secondaryVisionSubsystem);
   private final LowerCommand lowerCommand = new LowerCommand(throwerSubsystem);
+  private final ThrowCommand throwCommand = new ThrowCommand(throwerSubsystem);
 
   //triggers
   private final Trigger trigFlipForward = new Trigger(() -> (secondaryVisionSubsystem.getOrientation() == Orientation.TIP_FORWARD));
@@ -75,6 +62,7 @@ public class RobotContainer {
   private Trigger purgeButton;
   private Trigger manualSetConeButton;
   private Trigger manualSetCubeButton;
+  private Trigger resetEncoderButton;
 
   
 
@@ -92,6 +80,7 @@ public class RobotContainer {
 
     //default commands
     throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
+    driveSubsystem.setDefaultCommand(driveCommand);
   }
 
   /**
@@ -104,13 +93,26 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //Configure button bindings
+    /*
+     * Driver Control Scheme:
+     * 
+     * Right Joystick: Drive
+     * Left Joystick: Rotate
+     * Right Trigger: Intake
+     * Right Bumper: Purge
+     * A: Throw
+     * 
+     * Codriver Control Scheme:
+     * 
+     * 
+     */
     throwButton = primaryController.a();
     intakeButton = primaryController.rightTrigger(0.2);
     purgeButton = primaryController.rightBumper();
 
     manualSetCubeButton = secondaryController.x();
     manualSetConeButton = secondaryController.y();
+    resetEncoderButton = secondaryController.y();
   
   }
 
@@ -119,12 +121,14 @@ public class RobotContainer {
     intakeButton.whileTrue(intakeCommand.alongWith(lowerCommand));
     purgeButton.whileTrue(purgeCommand.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
     //only run the flipper while intaking
-    trigFlipForward.or(secondaryController.y()).and(intakeCommand::isScheduled).whileTrue(new FlipForwardCommand(hallwaySubsystem)); //TODO: add manual control logic to secondaryVisionSubsystem.getOrientation() for manual control and remove .or
-    trigFlipReverse.or(secondaryController.a()).and(intakeCommand::isScheduled).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+    trigFlipForward.or(secondaryController.y()).and(intakeCommand::isScheduled).whileTrue(new FlipCommand(hallwaySubsystem, false)); //TODO: add manual control logic to secondaryVisionSubsystem.getOrientation() for manual control and remove .or
+    trigFlipReverse.or(secondaryController.a()).and(intakeCommand::isScheduled).whileTrue(new FlipCommand(hallwaySubsystem, true)); //TODO: replace paramater with booleansupplier inside FlipCommand
   }
 
   private void configureThrowerSubsystem() {
     //Configure thrower subsystem
+
+    throwButton.whileTrue(throwCommand);
 
     //thrower manual control buttons, really for debugging purposes only, will likely add to codriver controller in a way that cant accidentally be triggered
     primaryController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
@@ -132,7 +136,7 @@ public class RobotContainer {
     primaryController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
     primaryController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
 
-    primaryController.y().whileTrue(new ResetEncoderCommand(throwerSubsystem));
+    resetEncoderButton.whileTrue(new ResetEncoderCommand(throwerSubsystem));
 
     //codriver manual control buttons
     manualSetConeButton.whileTrue(new ManualControl(secondaryVisionSubsystem, GamePiece.CONE));

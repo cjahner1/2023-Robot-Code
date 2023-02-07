@@ -7,11 +7,13 @@ package frc.robot.commands.hallway;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.HallwaySubsystem;
 
-public class FlipForwardCommand extends CommandBase {
+public class FlipCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
+  private boolean reverse;
   /** Creates a new FlipCommand. */
-  public FlipForwardCommand(HallwaySubsystem _hallwaySubsystem) {
-    hallwaySubsystem = _hallwaySubsystem;
+  public FlipCommand(HallwaySubsystem hallwaySubsystem, boolean reverse) {
+    this.hallwaySubsystem = hallwaySubsystem;
+    this.reverse = reverse;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hallwaySubsystem);
   }
@@ -23,7 +25,7 @@ public class FlipForwardCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setFlipper(0.5);
+    hallwaySubsystem.setFlipper(reverse ? 0.5 : -0.5);
   }
 
   // Called once the command ends or is interrupted.
