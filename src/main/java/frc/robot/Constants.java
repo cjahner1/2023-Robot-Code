@@ -14,17 +14,15 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-  }
-
   public static class SwerveConstants {
 
   }
 
   public static class ThrowerConstants {
 
-    public static final int primaryMotorID = 5;
+    public static final int shooter1ID = 13;
+    public static final int shooter2ID = 14;
+
 
     public static final boolean primaryMotorInverted = false;
     public static final boolean secondaryMotorInverted = false;
@@ -62,6 +60,11 @@ public final class Constants {
   }
 
   public static class HallwayConstants {
+    public static final int intake1ID = 9;
+    public static final int intake2ID = 10;
+
+    public static final int flipper1ID = 11;
+    public static final int flipper2ID = 12;
     
   }
 

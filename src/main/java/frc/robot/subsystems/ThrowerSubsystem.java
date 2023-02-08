@@ -41,26 +41,33 @@ public class ThrowerSubsystem extends SubsystemBase {
     thrower1.config_kD(1, ThrowerConstants.travelkD);
     thrower1.config_kF(1, ThrowerConstants.travelkF);
 
+    ShuffleboardTab tab = Shuffleboard.getTab("Thrower");
+    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates
+    tab.addNumber("Primary Motor Velocity", thrower1::getSelectedSensorVelocity);
+    tab.addNumber("Primary Motor Position", thrower1::getSelectedSensorPosition);
+    tab.addNumber("Primary Motor Error", thrower1::getClosedLoopError);
+    tab.add(this);
+
     resetEncoders();
-    configureShuffleboard();
   }
   
   //check to see if the motor is at the target position
   public boolean motionProfileFinished() {
     return (thrower1.getClosedLoopError() < ThrowerConstants.motionProfileTolerance);
   }
+
   public void resetEncoders() {
     thrower1.setSelectedSensorPosition(0);
-  }
-
-  public void setLoadPosition() {
-    configureMovement();
-    thrower1.set(ControlMode.MotionMagic, ThrowerConstants.loadPosition);
   }
 
   public void setTravelPosition() {
     configureMovement();
     thrower1.set(ControlMode.MotionMagic, ThrowerConstants.travelPosition);
+  }
+  
+  public void setLoadPosition() {
+    configureMovement();
+    thrower1.set(ControlMode.MotionMagic, ThrowerConstants.loadPosition);
   }
 
   public void setPreThrowPosition() {
@@ -85,15 +92,6 @@ public class ThrowerSubsystem extends SubsystemBase {
     thrower1.configMotionAcceleration(ThrowerConstants.throwAcceleration);
     thrower1.configMotionCruiseVelocity(ThrowerConstants.throwCruiseVelocity);
     thrower1.configMotionSCurveStrength(ThrowerConstants.throwProfileSmoothing);
-  }
-
-  public void configureShuffleboard() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Thrower");
-    //sets each shuffleboard widget to a boolean supplier from the motor, so it updates
-    tab.addNumber("Primary Motor Velocity", thrower1::getSelectedSensorVelocity);
-    tab.addNumber("Primary Motor Position", thrower1::getSelectedSensorPosition);
-    tab.addNumber("Primary Motor Error", thrower1::getClosedLoopError);
-    tab.add(this);
   }
 
   @Override

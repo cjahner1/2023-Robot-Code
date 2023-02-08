@@ -60,13 +60,11 @@ public class HallwaySubsystem extends SubsystemBase {
   }
 
   private String getColor() {
-    //TODO fix this
     return color.get();
   }
 
   private int getOrientation() {
     return (int)orientation.get();
-    //TODO manual control/fix
   }
 
   public boolean tipDetect() {

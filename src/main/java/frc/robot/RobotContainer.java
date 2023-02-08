@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hallway.FlipForwardCommand;
 import frc.robot.commands.hallway.FlipReverseCommand;
@@ -70,18 +69,16 @@ public class RobotContainer {
   private void configureBindings() {
     //Configure button bindings
     
-    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    primaryController.rightTrigger(0.1).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     trigConeTip.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
     trigConeBase.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
     trigCube.or(secondaryController.b()).whileTrue(new LowerCommand(throwerSubsystem));
 
-    primaryController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
-    primaryController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
-    primaryController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
-    primaryController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
-    primaryController.y().whileTrue(new ResetEncoderCommand(throwerSubsystem));
+    secondaryController.leftTrigger(0.1).whileTrue(new ThrowCommand(throwerSubsystem));
+    secondaryController.leftBumper().whileTrue(new PreThrowCommand(throwerSubsystem));
+    secondaryController.rightBumper().onTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
   /**
