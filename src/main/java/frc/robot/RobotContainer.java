@@ -16,16 +16,9 @@ import frc.robot.commands.thrower.PreThrowCommand;
 import frc.robot.commands.thrower.ResetEncoderCommand;
 import frc.robot.commands.thrower.ThrowCommand;
 import frc.robot.commands.thrower.TravelCommand;
-//import frc.robot.Constants.SecondaryVisionConstants;
 import frc.robot.subsystems.HallwaySubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
-//import frc.robot.subsystems.SecondaryVisionSubsystem;
 import frc.robot.subsystems.ThrowerSubsystem;
-//import edu.wpi.first.networktables.GenericEntry;
-//import edu.wpi.first.networktables.NetworkTableEntry;
-//import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-//import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-//import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -39,19 +32,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  //ShuffleboardTab tab = Shuffleboard.getTab("Settings");
-  //GenericEntry manualControl = tab.add("Manual Control", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-
+  
   //subsystems
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
   private final ThrowerSubsystem throwerSubsystem = new ThrowerSubsystem();
   private final PhotonVisionSubsystem photonVisionSubsystem = new PhotonVisionSubsystem();
-  //private final SecondaryVisionSubsystem secondaryVisionSubsystem = new SecondaryVisionSubsystem(manualControl);
 
   //triggers
-  private final Trigger trigFlipForward = new Trigger(HallwaySubsystem::tipDetect);
-  private final Trigger trigFlipReverse = new Trigger(HallwaySubsystem::baseDetect);
+  private final Trigger trigConeTip = new Trigger(hallwaySubsystem::tipDetect);
+  private final Trigger trigConeBase = new Trigger(hallwaySubsystem::baseDetect);
+  private final Trigger trigCube = new Trigger(hallwaySubsystem::cubeDetect);
 
   //controllers
   private final CommandXboxController primaryController = new CommandXboxController(0);
@@ -65,7 +56,6 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     configureBindings();
-    //configureThrowerSubsystem();
   }
 
   /**
@@ -80,58 +70,19 @@ public class RobotContainer {
   private void configureBindings() {
     //Configure button bindings
     
-    //hallway
-    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf)); //TODO, create enums
+    primaryController.rightTrigger(0.2).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    trigFlipForward.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem));
-    trigFlipReverse.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem));
+    trigConeTip.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
+    trigConeBase.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
+    trigCube.or(secondaryController.b()).whileTrue(new LowerCommand(throwerSubsystem));
 
-    
-    //thrower
     primaryController.povUp().whileTrue(new TravelCommand(throwerSubsystem));
     primaryController.povDown().whileTrue(new PreThrowCommand(throwerSubsystem));
     primaryController.povLeft().whileTrue(new ThrowCommand(throwerSubsystem));
     primaryController.povRight().whileTrue(new LowerCommand(throwerSubsystem));
-
     primaryController.y().whileTrue(new ResetEncoderCommand(throwerSubsystem));
   }
-
-  /*
-  private void configureThrowerSubsystem() {
-    //Configure thrower subsystem
-
-    //TODO: uncomment when motors dont need to be reset by hand
-    //throwerSubsystem.setDefaultCommand(new TravelCommand(throwerSubsystem));
-
-    Trigger isPurpleTrigger = new Trigger(secondaryVisionSubsystem::isPurple);
-    Trigger isYellowTrigger = new Trigger(secondaryVisionSubsystem::isYellow);
-
-    //no longer need a trigger for manual control because logic is handled in subsystem
-    //Trigger manualControlTrigger = new Trigger(() -> manualControl.getBoolean(false));
-
-    //uses triggers to cover edge case of detected color switching mid-intake
-    //only implementing triggers for base first and tip first until intake testing is complete
-    primaryController.a()
-      .and(isYellowTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 0).alongWith(new LowerCommand(throwerSubsystem)));
-
-    primaryController.a()
-      .and(isPurpleTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 0)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 0).alongWith(new LowerCommand(throwerSubsystem)));
-
-    primaryController.a()
-      .and(isYellowTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "yellow", 2).alongWith(new LowerCommand(throwerSubsystem)));
-
-    primaryController.a()
-      .and(isPurpleTrigger)
-      .and(() -> secondaryVisionSubsystem.getOrientation() == 2)
-      .whileTrue(new IntakeCommand(hallwaySubsystem, "purple", 2).alongWith(new LowerCommand(throwerSubsystem)));
-  } */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

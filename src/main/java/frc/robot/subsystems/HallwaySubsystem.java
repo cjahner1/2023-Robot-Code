@@ -59,17 +59,17 @@ public class HallwaySubsystem extends SubsystemBase {
     flipper1fx.set(ControlMode.Velocity, vel);
   }
 
-  private static String getColor() {
+  private String getColor() {
     //TODO fix this
     return color.get();
   }
 
-  private static int getOrientation() {
+  private int getOrientation() {
     return (int)orientation.get();
     //TODO manual control/fix
   }
 
-  public static boolean tipDetect() {
+  public boolean tipDetect() {
     if(cameraChoose.getSelected()){
       if(getColor().equals("yellow")){
         if(getOrientation() == 2){
@@ -80,7 +80,7 @@ public class HallwaySubsystem extends SubsystemBase {
     return false;
   }
 
-  public static boolean baseDetect() {
+  public boolean baseDetect() {
     if(cameraChoose.getSelected()){
       if(getColor().equals("yellow")){
         if(getOrientation() == 0){
@@ -91,14 +91,14 @@ public class HallwaySubsystem extends SubsystemBase {
     return false;
   }
   
-  //public boolean cubeDetect() {
-  //  if(cameraChoose.getSelected()){
-  //    if(color.get().equals("purple")){
-  //      return true;
-  //    }
-  //  }
-  //  return false;
-  //}
+  public boolean cubeDetect() {
+    if(cameraChoose.getSelected()){
+      if(getColor().equals("purple")){
+        return true;
+      }
+    }
+    return false;
+  }
 
   @Override
   public void periodic() {

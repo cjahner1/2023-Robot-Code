@@ -23,7 +23,7 @@ public class FlipForwardCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hallwaySubsystem.setFlipper(400);
+    hallwaySubsystem.setFlipper(300);
   }
 
   // Called once the command ends or is interrupted.
