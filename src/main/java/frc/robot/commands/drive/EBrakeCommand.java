@@ -9,6 +9,7 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class EBrakeCommand extends CommandBase {
   private DriveSubsystem driveSubsystem;
+  
   /** Creates a new EBrakeCommand. */
   public EBrakeCommand(DriveSubsystem driveSubsystem) {
     this.driveSubsystem = driveSubsystem;

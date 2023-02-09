@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ThrowerSubsystem;
 
 public class TravelCommand extends CommandBase {
+  private ThrowerSubsystem throwerSubsystem;
+
   /** Creates a new TravelCommand. */
-  ThrowerSubsystem throwerSubsystem;
   public TravelCommand(ThrowerSubsystem throwerSubsystem) {
     this.throwerSubsystem = throwerSubsystem;
-
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(throwerSubsystem);
   }
 

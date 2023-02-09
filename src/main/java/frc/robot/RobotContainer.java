@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import frc.robot.commands.auto.AutoCommand;
 import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.drive.EBrakeCommand;
 import frc.robot.commands.hallway.FlipForwardCommand;
 import frc.robot.commands.hallway.FlipReverseCommand;
 import frc.robot.commands.hallway.IntakeCommand;
@@ -30,8 +32,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  
   //subsystems
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final HallwaySubsystem hallwaySubsystem = new HallwaySubsystem();
@@ -68,7 +68,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    
+    primaryController.leftBumper().whileTrue(new EBrakeCommand(driveSubsystem));
+
     primaryController.rightTrigger(0.1).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
@@ -88,6 +89,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // returns command to run in auto period
-    return null;
+    return new AutoCommand();
   }
 }

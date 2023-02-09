@@ -9,6 +9,7 @@ import frc.robot.subsystems.HallwaySubsystem;
 
 public class FlipForwardCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
+  
   /** Creates a new FlipCommand. */
   public FlipForwardCommand(HallwaySubsystem hallwaySubsystem) {
     this.hallwaySubsystem = hallwaySubsystem;

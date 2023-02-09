@@ -9,8 +9,8 @@ import frc.robot.subsystems.HallwaySubsystem;
 
 public class IntakeCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
-  /** Creates a new IntakeCommand. */
 
+  /** Creates a new IntakeCommand. */
   public IntakeCommand(HallwaySubsystem hallwaySubsystem) {
     this.hallwaySubsystem = hallwaySubsystem;
     // Use addRequirements() here to declare subsystem dependencies.

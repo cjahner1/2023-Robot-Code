@@ -9,6 +9,7 @@ import frc.robot.subsystems.HallwaySubsystem;
 
 public class PurgeCommand extends CommandBase {
   private HallwaySubsystem hallwaySubsystem;
+  
   /** Creates a new PurgeCommand. */
   public PurgeCommand(HallwaySubsystem hallwaySubsystem) {
     this.hallwaySubsystem = hallwaySubsystem;

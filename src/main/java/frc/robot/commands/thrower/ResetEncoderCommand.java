@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ThrowerSubsystem;
 
 public class ResetEncoderCommand extends CommandBase {
+  private ThrowerSubsystem throwerSubsystem;
+
   /** Creates a new ResetEncoderCommand. */
-  ThrowerSubsystem throwerSubsystem;
   public ResetEncoderCommand(ThrowerSubsystem throwerSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.throwerSubsystem = throwerSubsystem;
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(throwerSubsystem);
   }
 

@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ThrowerSubsystem;
 
 public class PreThrowCommand extends CommandBase {
-  /** Creates a new PreThrowCommand. */
   private ThrowerSubsystem throwerSubsystem;
+
+  /** Creates a new PreThrowCommand. */
   public PreThrowCommand(ThrowerSubsystem throwerSubsystem) {
     this.throwerSubsystem = throwerSubsystem;
-
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(throwerSubsystem);
   }
 

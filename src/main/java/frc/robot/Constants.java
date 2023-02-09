@@ -19,13 +19,11 @@ public final class Constants {
   }
 
   public static class ThrowerConstants {
+    public static final int thrower1ID = 13;
+    public static final int thrower2ID = 14;
 
-    public static final int shooter1ID = 13;
-    public static final int shooter2ID = 14;
-
-
-    public static final boolean primaryMotorInverted = false;
-    public static final boolean secondaryMotorInverted = false;
+    public static final boolean thrower1Invert = false;
+    public static final boolean thrower2Invert = true;
 
     //motion magic values 
     public static int travelCruiseVelocity = 6000;
@@ -54,9 +52,7 @@ public final class Constants {
     public static int loadPosition = 15000;
     public static int travelPosition = 25000;
     public static int preShootPosition = 35000;
-    public static int throwPosition = 40000;
-
-    
+    public static int throwPosition = 40000;    
   }
 
   public static class HallwayConstants {
@@ -65,7 +61,6 @@ public final class Constants {
 
     public static final int flipper1ID = 11;
     public static final int flipper2ID = 12;
-    
   }
 
   public static class AutoConstants {
