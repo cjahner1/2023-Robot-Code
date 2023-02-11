@@ -44,8 +44,8 @@ public class RobotContainer {
   private final Trigger trigCube = new Trigger(hallwaySubsystem::cubeDetect);
 
   //controllers
-  private final CommandXboxController primaryController = new CommandXboxController(0);
-  private final CommandXboxController secondaryController = new CommandXboxController(1);
+  private final CommandXboxController controller1 = new CommandXboxController(0);
+  private final CommandXboxController controller2 = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -68,18 +68,18 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //Configure button bindings
-    primaryController.leftBumper().whileTrue(new EBrakeCommand(driveSubsystem));
+    controller1.leftBumper().whileTrue(new EBrakeCommand(driveSubsystem));
 
-    primaryController.rightTrigger(0.1).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    primaryController.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    controller1.rightTrigger(0.1).whileTrue(new IntakeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    controller1.rightBumper().whileTrue(new PurgeCommand(hallwaySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    trigConeTip.or(secondaryController.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
-    trigConeBase.or(secondaryController.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
-    trigCube.or(secondaryController.b()).whileTrue(new LowerCommand(throwerSubsystem));
+    trigConeTip.or(controller2.y()).whileTrue(new FlipForwardCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
+    trigConeBase.or(controller2.a()).whileTrue(new FlipReverseCommand(hallwaySubsystem).alongWith(new LowerCommand(throwerSubsystem)));
+    trigCube.or(controller2.b()).whileTrue(new LowerCommand(throwerSubsystem));
 
-    secondaryController.leftTrigger(0.1).whileTrue(new ThrowCommand(throwerSubsystem));
-    secondaryController.leftBumper().whileTrue(new PreThrowCommand(throwerSubsystem));
-    secondaryController.rightBumper().onTrue(new ResetEncoderCommand(throwerSubsystem));
+    controller2.leftTrigger(0.1).whileTrue(new ThrowCommand(throwerSubsystem));
+    controller2.leftBumper().whileTrue(new PreThrowCommand(throwerSubsystem));
+    controller2.rightBumper().onTrue(new ResetEncoderCommand(throwerSubsystem));
   }
 
   /**

@@ -21,11 +21,11 @@ public class HallwaySubsystem extends SubsystemBase {
   private WPI_TalonFX flipper1fx = new WPI_TalonFX(11);
   private WPI_TalonFX flipper2fx = new WPI_TalonFX(12);
 
-  private static NetworkTable table = NetworkTableInstance.getDefault().getTable("camera");
-  private static StringSubscriber color = table.getStringTopic("color").subscribe("error");
-  private static IntegerSubscriber orientation = table.getIntegerTopic("orientation").subscribe(-1);
+  private NetworkTable table = NetworkTableInstance.getDefault().getTable("camera");
+  private StringSubscriber color = table.getStringTopic("color").subscribe("error");
+  private IntegerSubscriber orientation = table.getIntegerTopic("orientation").subscribe(-1);
 
-  private static SendableChooser<Boolean> cameraChoose = new SendableChooser<>();
+  private SendableChooser<Boolean> cameraChoose = new SendableChooser<>();
 
   /** Creates a new HallwaySubsystem. */
   public HallwaySubsystem() {
