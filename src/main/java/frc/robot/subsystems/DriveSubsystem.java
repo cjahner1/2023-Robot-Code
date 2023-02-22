@@ -9,12 +9,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
   
+  
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {}
 
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {}
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
 
-  public void rotate(double aaa) {}
+  }
+
+  public void rotate(double aaa) {
+
+  }
 
   @Override
   public void periodic() {
